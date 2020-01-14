@@ -122,7 +122,7 @@ def create_problem(arg, name="rough_example", outname="ufault", refine=1):
 def run_simulation(name="rough_example", n_proc=1):
     "launches problem with specified number of processes"
 
-    subprocess.run([join(mpi_exec, "-n", str(int(n_proc)), "fdfault", "problems/"+name+".in"], cwd=fdfault_path)
+    subprocess.run([mpi_exec, "-n", str(int(n_proc)), "fdfault", "problems/"+name+".in"], cwd=fdfault_path)
 
 def compute_moment(name="rough_example", outname="ufault", datadir=join(fdfault_path,"data")):
     "computes seismic moment for a given problem"

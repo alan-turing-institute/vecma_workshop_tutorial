@@ -57,7 +57,7 @@ for point in input_points:
     name="simulation_{}".format(counter)
     try:
         result = compute_moment(name=name)
-    except FileNotFoundError:
+    except ModuleNotFoundError:
         create_problem(point, name=name)
         run_simulation(name=name, n_proc=4)
         result = compute_moment(name=name)
@@ -67,13 +67,13 @@ for point in input_points:
 results = np.array(results)
 
 # Now fit a Gaussian Process to the input_points and results to fit the approximate model. We use
-# the basic maximum martinal likelihood method to estimate the GP hyperparameters
+# the maximum marginal likelihood method to estimate the GP hyperparameters
 
 gp = mogp_emulator.GaussianProcess(input_points, results)
 gp.learn_hyperparameters()
 
 # We can now make predictions for a large number of input points much more quickly than running the
-# simulation.
+# simulation. For instance, let's sample 1000 points
 
 query_points = ed.sample(1000)
 predictions = gp.predict(query_points)
@@ -81,8 +81,8 @@ predictions = gp.predict(query_points)
 # predictions contains both the mean values and variances from the approximate model, so we can use this
 # to quantify uncertainty given a known value of the moment.
 
-# Since I don't have an actual observation to use, I will do a synthetic test by running an additional
-# point so I can evaluate the results from the known inputs.
+# Since we don't have an actual observation to use, we will do a synthetic test by running an additional
+# point so we can evaluate the results from the known inputs.
 
 known_input = ed.sample(1)
 name="known_value"
