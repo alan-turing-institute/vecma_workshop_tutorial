@@ -2,7 +2,9 @@
 Python files for the VECMA mogp_emulator tutorial
 
 Dependencies:
+
 [mogp_emulator](https://www.github.com/alan-turing-institute/mogp_emulator)
+
 [fdfault](https://www.github.com/egdaub/fdfault)
 
 Contains three Python files:
