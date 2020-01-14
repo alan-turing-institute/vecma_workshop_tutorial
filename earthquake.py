@@ -1,9 +1,13 @@
+from os.path import join
 import fdfault
 import fdfault.analysis
 import numpy as np
 from utils import generate_profile, generate_normals_2d, rotate_xy2nt_2d
 import subprocess
 from scipy.integrate import simps
+
+mpi_exec = "/usr/local/bin/mpiexec"
+fdfault_path = "/Users/edaub/Projects/fdfault"
 
 def create_problem(arg, name="rough_example", outname="ufault", refine=1):
     """
@@ -113,14 +117,14 @@ def create_problem(arg, name="rough_example", outname="ufault", refine=1):
 
     p.add_output(fdfault.output(outname,'U', nt, nt, 1, 0, nx - 1, 1, ny, ny, 1, 0, 0, 1))
 
-    p.write_input(directory="/Users/edaub/Projects/fdfault/problems")
+    p.write_input(directory=join(fdfault_path,"problems"))
 
 def run_simulation(name="rough_example", n_proc=1):
     "launches problem with specified number of processes"
 
-    subprocess.run(["/usr/local/bin/mpirun", "-n", str(int(n_proc)), "fdfault", "problems/"+name+".in"], cwd = "/Users/edaub/Projects/fdfault/")
+    subprocess.run([join(mpi_exec, "-n", str(int(n_proc)), "fdfault", "problems/"+name+".in"], cwd=fdfault_path)
 
-def compute_moment(name="rough_example", outname="ufault", datadir="/Users/edaub/Projects/fdfault/data/"):
+def compute_moment(name="rough_example", outname="ufault", datadir=join(fdfault_path,"data")):
     "computes seismic moment for a given problem"
 
     U = fdfault.analysis.output(name, outname, datadir)
