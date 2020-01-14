@@ -1,13 +1,13 @@
 # vecma_workshop_tutorial
 Python files for the VECMA mogp_emulator tutorial
 
-Dependencies:
+## Dependencies:
 
 [mogp_emulator](https://www.github.com/alan-turing-institute/mogp_emulator)
 
 [fdfault](https://www.github.com/egdaub/fdfault)
 
-Contains three Python files:
+## Contents:
 
 utils.py: Utility functions needed for creating the earthquake simulation
 
