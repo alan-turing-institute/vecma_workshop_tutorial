@@ -1,4 +1,4 @@
-# vecma_workshop_tutorial
+# Vecma Workshop Tutorial
 Python files for the VECMA mogp_emulator tutorial
 
 ## Dependencies:
