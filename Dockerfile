@@ -83,7 +83,6 @@ RUN fab localhost install_plugin:fabmogp
 RUN echo '\n\nlocalhost:\n\
 \tmpi_exec : "/usr/bin/mpiexec" \n\
 \tfdfault_exec : "$Tutorial_dir/$fdfault_dir" \n\
-\n' >> ${Tutorial_dir}/${FabSim3_dir}/deploy/machines_user.yml
-
+\n' >> /home/root/turing_workshop/FabSim3/deploy/machines_user.yml
 
 ENTRYPOINT  service ssh restart > /dev/null 2>&1 && /bin/bash
