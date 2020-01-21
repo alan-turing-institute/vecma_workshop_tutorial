@@ -1,7 +1,7 @@
 VECMA Workshop Tutorial
 =======================
 
-In this tutorial we perform `Uncertainty Quantification (UQ) <https://en.wikipedia.org/wiki/Uncertainty_quantification>`_ [Hoekstra2019]_ on an earthquake model, **train and apply a surrogate model**. To generate initial data for the surrogate model, we perform an ensemble of many simulation runs, each with different input parameters. To generate and draw the samples we use the `Latin Hypercube technique <https://en.wikipedia.org/wiki/Latin_hypercube_sampling>`_, while we rely on the `FabSim3 <https://fabsim3.readthedocs.io>`_ tool in the VECMA toolkit to automatically run ensembles and curate both the simulation inputs and outputs. In the final stages of the tutorial we build and apply the surrogate model, and attempt to identify points that have been Not Ruled Out Yet **(Eric, can you explain more clearly what this means?)**  
+In this tutorial we perform `Uncertainty Quantification (UQ) <https://en.wikipedia.org/wiki/Uncertainty_quantification>`_ [Hoekstra2019]_ on an earthquake model, **train and apply a surrogate model**. To generate initial data for the surrogate model, we perform an ensemble of many simulation runs, each with different input parameters. To generate and draw the samples we use the `Latin Hypercube technique <https://en.wikipedia.org/wiki/Latin_hypercube_sampling>`_ [Tang1993]_, while we rely on the `FabSim3 <https://fabsim3.readthedocs.io>`_ tool in the VECMA toolkit to automatically run ensembles and curate both the simulation inputs and outputs. In the final stages of the tutorial we build and apply the surrogate model, and attempt to identify points that have been Not Ruled Out Yet **(Eric, can you explain more clearly what this means?)**  
 
 Though this particular tutorial is intended for execution on the local host due to time constraints of this session, we will also provide information on how you can scale up various aspects of this approach, and use FabSim3 to run the same ensembles on remote machines.
 
@@ -207,3 +207,4 @@ You can run the full simulation workflow by using:
 References
 ##########
 .. [Hoekstra2019] Hoekstra, Alfons G., Simon Portegies Zwart, and Peter V. Coveney. "Multiscale modelling, simulation and computing: from the desktop to the exascale." (2019): 20180355.
+.. [Tang1993] Tang, Boxin. "Orthogonal array-based Latin hypercubes." Journal of the American statistical association 88.424 (1993): 1392-1397.
