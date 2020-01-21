@@ -8,8 +8,7 @@ Though this particular tutorial is intended for execution on the local host due 
 Setting up the environment and FabSim3
 ~~~~~~~~
 
-To make life easier, we provide a Docker image which contains an installation of FabSim3, as well as the Earthquake simulation code and the Mogp toolkit. Our tutorial relies on a specific FabSim3 plugin that provides customisations for this application. The plugin is called FabMogp, and you can find it at: `https://github.com/edaub/fabmogp`_
-
+To make life easier, we provide a Docker image which contains an installation of FabSim3, as well as the Earthquake simulation code and the Mogp toolkit. Our tutorial relies on a specific FabSim3 plugin that provides customisations for this application. The plugin is called FabMogp, and you can find it at: https://github.com/edaub/fabmogp
 To set up Docker, please refer to the documentation provided `here <https://www.docker.com/get-started>`_
 
 To download the Docker image, you can use:
