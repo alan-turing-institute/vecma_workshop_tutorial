@@ -8,9 +8,28 @@ Though this particular tutorial is intended for execution on the local host due 
 Setting up the environment and FabSim3
 ~~~~~~~~
 
-To make life easier, we provide a Docker image which contains an installation of FabSim3, as well as the Earthquake simulation code and the Mogp toolkit.
+To make life easier, we provide a Docker image which contains an installation of FabSim3, as well as the Earthquake simulation code and the Mogp toolkit. Our tutorial relies on a specific FabSim3 plugin that provides customisations for this application. The plugin is called FabMogp, and you can find it at: `https://github.com/edaub/fabmogp`_
 
-**(Hamid: please add instructions for users, and keep in mind there will be Apple, Windows and Linux here)**
+To set up Docker, please refer to the documentation provided `here <https://www.docker.com/get-started>`_
+
+To download the Docker image, you can use:
+::
+
+    docker pull ha3546/vecma_turing_workshop
+
+then, login to the image by typing:
+::
+
+    docker run --rm -ti ha3546/vecma_turing_workshop
+
+
+and you can run the simulation by using:
+::
+
+    fab localhost mogp_ensemble:demo,sample_points=20
+    fab localhost fetch_results
+    fab localhost mogp_analysis:demo,demo_localhost_16
+
 
 Setting up the model
 ~~~~~~~~
