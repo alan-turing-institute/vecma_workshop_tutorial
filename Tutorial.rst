@@ -77,62 +77,70 @@ MacBook Pro, so the entire design will take several minutes to run.
    for point in input_points:
        name="simulation_{}".format(counter)
        try:
-           result = com
-           
-           
-           pute_moment(name=name)
-    except ModuleNotFoundError:
-        create_problem(point, name=name)
-        run_simulation(name=name, n_proc=4)
-        result = compute_moment(name=name)
-    results.append(result)
-    counter += 1
+           result = compute_moment(name=name)
+        except ModuleNotFoundError:
+            create_problem(point, name=name)
+            run_simulation(name=name, n_proc=4)
+            result = compute_moment(name=name)
+        results.append(result)
+        counter += 1
 
-results = np.array(results)
+    results = np.array(results)
 
-# Now fit a Gaussian Process to the input_points and results to fit the approximate model. We use
-# the maximum marginal likelihood method to estimate the GP hyperparameters
+Now fit a Gaussian Process to the input\_points and results to fit the
+approximate model. We use the maximum marginal likelihood method to
+estimate the GP hyperparameters
 
-gp = mogp_emulator.GaussianProcess(input_points, results)
-gp.learn_hyperparameters()
+::
 
-# We can now make predictions for a large number of input points much more quickly than running the
-# simulation. For instance, let's sample 1000 points
+    gp = mogp_emulator.GaussianProcess(input_points, results)
+    gp.learn_hyperparameters()
 
-query_points = ed.sample(1000)
-predictions = gp.predict(query_points)
+We can now make predictions for a large number of input points much more
+quickly than running the simulation. For instance, let's sample 1000
+points query\_points = ed.sample(1000) predictions =
+gp.predict(query\_points)
 
-# predictions contains both the mean values and variances from the approximate model, so we can use this
-# to quantify uncertainty given a known value of the moment.
+Predictions contains both the mean values and variances from the
+approximate model, so we can use this to quantify uncertainty given a
+known value of the moment. Since we don't have an actual observation to
+use, we will do a synthetic test by running an additional point so we
+can evaluate the results from the known inputs.
 
-# Since we don't have an actual observation to use, we will do a synthetic test by running an additional
-# point so we can evaluate the results from the known inputs.
+::
 
-known_input = ed.sample(1)
-name="known_value"
-create_problem(known_input[0], name=name)
-run_simulation(name=name, n_proc=4)
-known_value = compute_moment(name=name)
+    known_input = ed.sample(1)
+    name="known_value"
+    create_problem(known_input[0], name=name)
+    run_simulation(name=name, n_proc=4)
+    known_value = compute_moment(name=name)
 
-# One easy method for comparing a model with observations is known as History Matching, where you
-# compute an implausibility measure for many sample points given all sources of uncertainty
-# (observational error, approximate model uncertainty, and "model discrepancy" which is a measure of
-# how good the model is at describing reality). For simplicity here we will only consider the
-# approximate model uncertainty, but for real situations it is important to include all three sources.
-# The implausibility is then just the number of standard deviations between the predicted value and
-# the known value.
+One easy method for comparing a model with observations is known as
+History Matching, where you compute an implausibility measure for many
+sample points given all sources of uncertainty (observational error,
+approximate model uncertainty, and "model discrepancy" which is a
+measure of how good the model is at describing reality).
 
-# To compute the implausibility, we use the HistoryMatching class, which requires the observation,
-# query points (coords), and predicted values (expectations), plus a threshold above which we can
-# rule out a point
+For simplicity here we will only consider the approximate model
+uncertainty, but for real situations it is important to include all
+three sources. The implausibility is then just the number of standard
+deviations between the predicted value and the known value. To compute
+the implausibility, we use the HistoryMatching class, which requires the
+observation, query points (coords), and predicted values (expectations),
+plus a threshold above which we can rule out a point
 
-hm = mogp_emulator.HistoryMatching(obs=known_value, coords=query_points, expectations=predictions,
-                                   threshold=2.)
+::
 
-implaus = hm.get_implausibility()
+    hm = mogp_emulator.HistoryMatching(obs=known_value, coords=query_points, expectations=predictions, threshold=2.)
 
-# We can see which points have not been ruled out yet (NROY) based on the implausibility threshold.
+    implaus = hm.get_implausibility()
 
-print("Actual point:", known_input[0])
-print("NROY:")
-print(query_points[hm.get_NROY()])
+We can see which points have not been ruled out yet (NROY) based on the
+implausibility threshold.
+
+::
+
+    print("Actual point:", known_input[0])
+    print("NROY:")
+    print(query_points[hm.get_NROY()])
+
