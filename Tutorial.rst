@@ -1,7 +1,18 @@
 VECMA Workshop Tutorial
 =======================
 
-Overview
+In this tutorial we perform Uncertainty Quantification (UQ) on an earthquake model, train and apply a surrogate model. To generate initial data for the surrogate model, we perform an ensemble of many simulation runs, each with different input parameters. To generate and draw the samples we use the Latin Hypercube technique, while we rely on the `FabSim3 <https://fabsim3.readthedocs.io>`_ tool in the VECMA toolkit to automatically run ensembles and curate both the simulation inputs and outputs. In the final stages of the tutorial we build and apply the surrogate model, and attempt to identify points that have been Not Ruled Out Yet **(Eric, can you explain more clearly what this means?)**.
+
+Though this particular tutorial is intended for execution on the local host due to time constraints of this session, we will also provide information on how you can scale up various aspects of this approach, and use FabSim3 to run the same ensembles on remote machines.
+
+Setting up the environment and FabSim3
+~~~~~~~~
+
+To make life easier, we provide a Docker image which contains an installation of FabSim3, as well as the Earthquake simulation code and the Mogp toolkit.
+
+**(Hamid: please add instructions for users, and keep in mind there will be Apple, Windows and Linux here)**
+
+Setting up the model
 ~~~~~~~~
 
 This demo runs an earthquake simulation that depends on an input stress
@@ -15,7 +26,7 @@ run relatively quickly, yet still maintain the complex nature of the
 problem.
 
 We have a broad understanding of the stress tensor values that might be
-(?). Our simulation is a 2D plane strain model, so the stress tensor has
+**(Eric: Indicate a range ?)**. Our simulation is a 2D plane strain model, so the stress tensor has
 three components: 
 
 - One in the nominal fault plane 
@@ -42,6 +53,10 @@ We parametrize the stress tensor as follows:
    3. Ratio of out-of-plane Normal Stress to in-plane normal stress
       (assumed to be between 0.9 and 1.1)
 
+
+Creating samples
+~~~~~~~~~~~~~~~~
+
 This parameterization formulates the problem as three independent
 components, so we can draw samples for these components independently.
 we use the Latin HyperCube approach (i.e. the latinhypercubedesign class) to create the design, which
@@ -60,6 +75,9 @@ method:
 
        np.random.seed(157374)
        input_points = ed.sample(20)
+       
+Executing the simulations locally
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Now we can actually run the simulations. First, we feed the input points
 to `create_problem` to write the input files, call `run_simulation` to
@@ -87,6 +105,13 @@ MacBook Pro, so the entire design will take several minutes to run.
 
     results = np.array(results)
 
+Executing the simulations on a remote resource
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**(Derek & Hamid to fill in this section)**
+
+Creating a surrogate model
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 Now fit a Gaussian Process to the input\_points and results to fit the
 approximate model. We use the maximum marginal likelihood method to
 estimate the GP hyperparameters
@@ -98,8 +123,12 @@ estimate the GP hyperparameters
 
 We can now make predictions for a large number of input points much more
 quickly than running the simulation. For instance, let's sample 1000
-points query\_points = ed.sample(1000) predictions =
-gp.predict(query\_points)
+points
+
+::
+
+    query\_points = ed.sample(1000) 
+    predictions = gp.predict(query\_points)
 
 Predictions contains both the mean values and variances from the
 approximate model, so we can use this to quantify uncertainty given a
@@ -135,8 +164,8 @@ plus a threshold above which we can rule out a point
 
     implaus = hm.get_implausibility()
 
-We can see which points have not been ruled out yet (NROY) based on the
-implausibility threshold.
+We can see which points have not been ruled out yet (NROY) based on the implausibility threshold.
+**(Can we provide a literature reference to what this means?)** 
 
 ::
 
