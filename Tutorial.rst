@@ -1,7 +1,10 @@
 VECMA Workshop Tutorial
 =======================
 
-In this tutorial we perform Uncertainty Quantification (UQ) on an earthquake model, train and apply a surrogate model. To generate initial data for the surrogate model, we perform an ensemble of many simulation runs, each with different input parameters. To generate and draw the samples we use the Latin Hypercube technique, while we rely on the `FabSim3 <https://fabsim3.readthedocs.io>`_ tool in the VECMA toolkit to automatically run ensembles and curate both the simulation inputs and outputs. In the final stages of the tutorial we build and apply the surrogate model, and attempt to identify points that have been Not Ruled Out Yet **(Eric, can you explain more clearly what this means?)**.
+In this tutorial we perform Uncertainty Quantification (UQ) on an earthquake model, train and apply a surrogate model. 
+.. Uncertainty quantification (UQ)::  Uncertainty quantification (UQ) is the science of quantitative characterization and reduction of uncertainties in both computational and real world applications. In Uncertainty Quantification, we study the propagation of known and unresolvable variability in the input data and model parameters to the model output.
+
+To generate initial data for the surrogate model, we perform an ensemble of many simulation runs, each with different input parameters. To generate and draw the samples we use the Latin Hypercube technique, while we rely on the `FabSim3 <https://fabsim3.readthedocs.io>`_ tool in the VECMA toolkit to automatically run ensembles and curate both the simulation inputs and outputs. In the final stages of the tutorial we build and apply the surrogate model, and attempt to identify points that have been Not Ruled Out Yet **(Eric, can you explain more clearly what this means?)**.
 
 Though this particular tutorial is intended for execution on the local host due to time constraints of this session, we will also provide information on how you can scale up various aspects of this approach, and use FabSim3 to run the same ensembles on remote machines.
 
