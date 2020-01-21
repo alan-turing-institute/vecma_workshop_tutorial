@@ -23,14 +23,6 @@ then, login to the image by typing:
     docker run --rm -ti ha3546/vecma_turing_workshop
 
 
-and you can run the simulation by using:
-::
-
-    fab localhost mogp_ensemble:demo,sample_points=20
-    fab localhost fetch_results
-    fab localhost mogp_analysis:demo,demo_localhost_16
-
-
 Setting up the model
 ~~~~~~~~
 
@@ -123,6 +115,15 @@ MacBook Pro, so the entire design will take several minutes to run.
         counter += 1
 
     results = np.array(results)
+    
+Within FabSim you can also do this on the command line using:
+::
+
+    fab localhost mogp_ensemble:demo,sample_points=20
+    
+
+The advantage of using this approach is that the runs are each performed in individual directories, with input, output and environment curated accordingly. This makes it very easy to reproduce individual runs, and also helps with the diagnostics in case some of the simulations exhibit unexpected behaviors.
+    
 
 Executing the simulations on a remote resource
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -191,4 +192,15 @@ We can see which points have not been ruled out yet (NROY) based on the implausi
     print("Actual point:", known_input[0])
     print("NROY:")
     print(query_points[hm.get_NROY()])
+
+Running the whole thing automated from the command line:
+~~~~~~~~~~~~~~
+
+
+You can run the full simulation workflow by using:
+::
+
+    fab localhost mogp_ensemble:demo,sample_points=20
+    fab localhost fetch_results
+    fab localhost mogp_analysis:demo,demo_localhost_16
 
