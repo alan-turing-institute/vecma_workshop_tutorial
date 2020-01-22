@@ -79,5 +79,7 @@ RUN fab localhost install_plugin:fabmogp
 # customize bashrc
 RUN sed -i -e 's/#force_color_prompt=yes$/force_color_prompt=yes/'  /root/.bashrc
 RUN echo 'export PS1="\[\033[01;34m\][VECMA tutorial]\[\033[01;31m\] \w\[\033[00m\] \$ "' >> /root/.bashrc
+RUN echo 'export PATH='${Tutorial_dir}'/'${FabSim3_dir}'/bin:$PATH' >> /root/.bashrc
+RUN echo 'export PYTHONPATH='${Tutorial_dir}'/'${FabSim3_dir}':$PYTHONPATH' >> /root/.bashrc
 
 ENTRYPOINT  service ssh restart > /dev/null 2>&1 && /bin/bash
