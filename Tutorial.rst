@@ -3,7 +3,13 @@ VECMA Workshop Tutorial
 
 In this tutorial we perform Uncertainty Quantification (UQ) on an earthquake model, train and apply a surrogate model. To generate initial data for the surrogate model, we perform an ensemble of many simulation runs, each with different input parameters. To generate and draw the samples we use the Latin Hypercube technique, while we rely on the `FabSim3 <https://fabsim3.readthedocs.io>`_ tool in the VECMA toolkit to automatically run ensembles and curate both the simulation inputs and outputs. In the final stages of the tutorial we build and apply the surrogate model, and attempt to identify points that have been Not Ruled Out Yet **(Eric, can you explain more clearly what this means?)**.
 
-Though this particular tutorial is intended for execution on the local host due to time constraints of this session, we will also provide information on how you can scale up various aspects of this approach, and use FabSim3 to run the same ensembles on remote machines.
+In terms of components used, our Tube Map looks as follows:
+
+.. figure:: FabMogpMap.png
+
+We will use both `FabSim3 <https://fabsim3.readthedocs.io>`_ from the VECMA toolkit and the `Mogp emulator <https://github.com/alan-turing-institute/mogp_emulator>`_ from the Turing institute. Although we focus mainly on the Mogp emulator to do sampling in this tutorial, we will reflect on how the same workflow could be established using an alternative tool, namely the `EasyVVUQ component <http://easyvvuq.readthedocs.io>`_ in the VECMA toolkit.
+
+In addition, we will perform tasks on only on your local host due to time constraints of this session, but we will provide clear instructions on how you can scale up various aspects of this approach, and use FabSim3 to run the same ensembles on remote machines such as supercomputers.
 
 Setting up the environment and FabSim3
 ~~~~~~~~
