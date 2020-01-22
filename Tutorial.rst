@@ -34,6 +34,9 @@ then, login to the image by typing:
 
     docker run --rm -ti ha3546/vecma_turing_workshop
 
+Within the container, you can start a Python interpreter using ``python3`` or ``ipython`` to
+run the following commands. Alternatively we describe how to automate the entire workflow
+from the shell using FabSim.
 
 Setting up the model
 ~~~~~~~~
@@ -159,6 +162,8 @@ MacBook Pro, so the entire design will take several minutes to run.
 
 ::
 
+   from earthquake import create_problem, run_simulation
+
    results = []
    counter = 1
 
@@ -170,15 +175,20 @@ MacBook Pro, so the entire design will take several minutes to run.
        results.append(result)
        counter += 1
 
-    results = np.array(results)
+   results = np.array(results)
 
 Within FabSim you can also do this on the command line using:
 ::
 
-    fab localhost mogp_ensemble:demo,sample_points=20
+   fab localhost mogp_ensemble:demo,sample_points=20
 
-
-The advantage of using this approach is that the runs are each performed in individual directories, with input, output and environment curated accordingly. This makes it very easy to reproduce individual runs, and also helps with the diagnostics in case some of the simulations exhibit unexpected behaviors.
+You can set the random seed for the Latin Hypercube sampling by passing ``seed=<seed>`` along with the
+number of sample points(separate any arguments with a comma). The ``mogp_ensemble`` workflow will
+automatically sample the Latin Hypercube to create the desired number of points, set up all of the
+necessary simulations, and run them. The advantage of using this approach over the manual approach
+described above is that the runs are each performed in individual directories, with input, output and
+environment curated accordingly. This makes it very easy to reproduce individual runs, and also helps
+with the diagnostics in case some of the simulations exhibit unexpected behaviors.
 
 
 Executing the simulations on a remote resource
@@ -189,13 +199,35 @@ Executing the simulations on a remote resource
 Analysing the Results
 ~~~~~~~~~~~~~~~~~~~~~
 
+Collecting the Results
+----------------------
+
+If the simulations were run within the Python interpreter we do not need to do anything to collect
+the results; however if simulations were run using FabSim, then we need to fetch the results and
+load them into the python interpreter. From the shell, to fetch the results we simple need to enter: ::
+
+   fab localhost fetch_results
+
+This will collate all of the results into a subdirectory of the ``results`` directory within the
+FabSim installation (within the Docker container, this is likely to be ``demo_localhost_16``).
+Once the results have been collected, to re-load the input points, results, and the
+``LatinHypercubeDesign`` class that created them we have provided a convenience function
+``load_results`` in the ``mogp_functions`` module: ::
+
+   from mogp_functions import load_results
+
+   results_dir = "results/demo_localhost_16"
+   input_points, results, ed = load_results(results_dir)
+
+This should allow you to proceed with the following Python analysis commands.
+
 Creating the surrogate model
 ----------------------------
 
 Once we have run all of the input points, we can proceed with fitting the approximate model and analysing
 the parameter space. We can fit a Gaussian Process to the results using the ``GaussianProcess`` class: ::
 
-   gp = mogp_emulator.GaussianProcess(input_points, targets)
+   gp = mogp_emulator.GaussianProcess(input_points, results)
 
 This just creates the GP class. In order to make predictions, we need to fit the model to the data.
 The class has several methods of doing this, but the simplest is to use the maximum marginal likelihood,
@@ -215,8 +247,10 @@ before, we do this using our Latin Hypercube Design (which ensures that the poin
 out across the full parameter space), but since we do not need to run the computationally intensive
 simulation for each one, we can draw many more samples (say, 10,000 in this case): ::
 
-   analysis_points = draw_samples(n_samples=10000)
-   predictions = gp.predict(analysis_points)
+   analysis_points = 10000
+
+   query_points = ed.sample(analysis_points)
+   predictions = gp.predict(query_points)
 
 The ``predictions`` holds the mean and variance of all 10,000 prediction points. We will need these
 momentarily to analyse the input space.
@@ -254,12 +288,12 @@ here; reasonable values to consider range from 40 to 250) and the model predicti
 (referred to as``expectations`` here). These can be passed directly to the ``HistoryMatching`` class
 when creating it (or prior to computing the implausibility): ::
 
-   analysis_points = 10000
+   analysis_samples = 10000
    threshold = 3.
    known_value = 58.
 
-   query_points = ed.sample(analysis_points)
-   predictions = gp.predict(query_points)
+   analysis_points = ed.sample(analysis_samples)
+   predictions = gp.predict(analysis_points)
 
    hm = mogp_emulator.HistoryMatching(obs=known_value, expectations=predictions,
                                       threshold=threshold)
@@ -326,6 +360,23 @@ meaning that realistic applications of this sort will be much more uncertain. Ho
 illustrates the essence of the UQ workflow and how it can be used to constrain complex models with
 observations.
 
+Automating the Analysis
+-----------------------
+
+We have provided two ways to run the above set of analysis commands and plotting commands. To
+run the entire thing within the Python interpreter, import the ``run_mogp_analysis`` function
+from ``mogp_function``. This function requires 4 inputs: ``analysis_points``, ``known_value``,
+``threshold``, and ``results_dir`` (all of these variables are defined above). This should
+run the analysis and create the plots.
+
+Alternatively, we have set up a FabSim command to do this for you that accepts all of the
+above options (default values are the ones provided above for everything except ``results_dir``).
+To run the analysis using FabSim, enter the following on the command line: ::
+
+   fab localhost mogp_analysis:demo,demo_localhost_16
+
+This
+
 Running the whole thing automated from the command line:
 ~~~~~~~~~~~~~~
 
@@ -333,9 +384,9 @@ Running the whole thing automated from the command line:
 You can run the full simulation workflow by using:
 ::
 
-    fab localhost mogp_ensemble:demo,sample_points=20
-    fab localhost fetch_results
-    fab localhost mogp_analysis:demo,demo_localhost_16
+   fab localhost mogp_ensemble:demo,sample_points=20
+   fab localhost fetch_results
+   fab localhost mogp_analysis:demo,demo_localhost_16
 
 Further Investigation
 ~~~~~~~~~~~~~~~~~~~~~
