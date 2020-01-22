@@ -12,6 +12,7 @@ ARG fdfault_repo=https://github.com/egdaub/fdfault.git
 ARG mogp_emulator_dir=mogp_emulator
 ARG mogp_emulator_repo=https://github.com/alan-turing-institute/mogp_emulator.git
 
+
 # install dependencies needs to for FabSim3
 RUN apt-get update && \
     apt-get install -y --no-install-recommends sudo git build-essential libopenmpi-dev openmpi-bin && \
@@ -20,6 +21,7 @@ RUN apt-get update && \
     apt-get clean autoclean && \
     apt-get autoremove --yes && \
     rm -rf /var/lib/{apt,dpkg,cache,log}
+
 
 RUN cd /usr/local/bin && \
     ln -s /usr/bin/python3 python && \
@@ -59,11 +61,13 @@ localhost:\n\
   fdfault_exec : "'${Tutorial_dir}'/'${fdfault_dir}'"\n\
 \n' >> ${FabSim3_dir}/deploy/machines_user.yml
 
+
 # allow everyone to read and execute the file
 RUN mkdir /var/run/sshd && sudo chmod -R 755 /var/run/sshd
 RUN mkdir ~/.ssh && sudo chmod -R 755 ~/.ssh
 RUN echo 'root:root' | chpasswd
 RUN sed -i 's/#PermitRootLogin .*$/PermitRootLogin yes/' /etc/ssh/sshd_config
+
 
 #RUN fab localhost setup_fabsim
 RUN rm -f ~/.ssh/id_rsa
@@ -71,6 +75,7 @@ RUN ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
 RUN cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 RUN chmod og-wx ~/.ssh/authorized_keys
 RUN ssh-keyscan -H localhost >> ~/.ssh/known_hosts
+
 
 WORKDIR ${Tutorial_dir}/${FabSim3_dir}
 RUN fab localhost install_plugin:FabDummy
@@ -81,5 +86,6 @@ RUN sed -i -e 's/#force_color_prompt=yes$/force_color_prompt=yes/'  /root/.bashr
 RUN echo 'export PS1="\[\033[01;34m\][VECMA tutorial]\[\033[01;31m\] \w\[\033[00m\] \$ "' >> /root/.bashrc
 RUN echo 'export PATH='${Tutorial_dir}'/'${FabSim3_dir}'/bin:$PATH' >> /root/.bashrc
 RUN echo 'export PYTHONPATH='${Tutorial_dir}'/'${FabSim3_dir}':$PYTHONPATH' >> /root/.bashrc
+RUN echo 'export PYTHONPATH='${Tutorial_dir}'/'${FabSim3_dir}'/plugins/fdfault:$PYTHONPATH' >> /root/.bashrc
 
 ENTRYPOINT  service ssh restart > /dev/null 2>&1 && /bin/bash
