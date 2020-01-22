@@ -1,19 +1,28 @@
 VECMA Workshop Tutorial
 =======================
 
-In this tutorial we perform Uncertainty Quantification (UQ) on an earthquake model by training
-and applying a surrogate model. To generate initial data for the surrogate model, we perform an
-ensemble of many simulation runs of the earthquake, each with different input parameters.
-To generate and draw the samples we use the Latin Hypercube technique, while we rely on the
-`FabSim3 <https://fabsim3.readthedocs.io>`_ tool in the VECMA toolkit to automatically run
-ensembles and curate both the simulation inputs and outputs. In the final stages of the tutorial
-we use the `mogp_emulator <https://mogp_emulator.readthedocs.io`_ package to build a Gaussian
-Process surrogate model, and use the surrogate model to examine the parameter space and determine
+In this tutorial we perform `Uncertainty Quantification (UQ) <https://en.wikipedia.org/wiki/Uncertainty_quantification>`_ [Hoekstra2019]_ on an earthquake model, by
+**training and applying a surrogate model**. To generate initial data for the surrogate model,
+we perform an ensemble of many simulation runs of the earthquake, each with different input parameters.
+To generate and draw the samples we use the
+`Latin Hypercube technique <https://en.wikipedia.org/wiki/Latin_hypercube_sampling>`_ [Tang1993]_,
+while we rely on the `FabSim3 <https://fabsim3.readthedocs.io>`_ tool in the VECMA toolkit to
+automatically run ensembles and curate both the simulation inputs and outputs. In the final stages
+of the tutorial we use the `mogp_emulator <https://mogp_emulator.readthedocs.io`_ package to build a
+Gaussian Process surrogate model, and use the surrogate model to examine the parameter space and determine
 plausible inputs to the computational earthquake model.
 
-Though this particular tutorial is intended for execution on the local host due to time constraints
-of this session, we will also provide information on how you can scale up various aspects of this
-approach, and use FabSim3 to run the same ensembles on remote machines.
+In terms of components used, our Tube Map looks as follows:
+
+.. figure:: FabMogpMap.png
+
+We will use both `FabSim3 <https://fabsim3.readthedocs.io>`_ from the VECMA toolkit and the
+`Mogp emulator <https://github.com/alan-turing-institute/mogp_emulator>`_ from the Turing institute.
+Although we focus mainly on the Mogp emulator to do sampling in this tutorial, we will reflect on how the
+same workflow could be established using an alternative tool, namely the
+`EasyVVUQ component <http://easyvvuq.readthedocs.io>`_ in the VECMA toolkit.
+
+In addition, we will perform tasks on only on your local host due to time constraints of this session, but we will provide clear instructions on how you can scale up various aspects of this approach, and use FabSim3 to run the same ensembles on remote machines such as supercomputers.
 
 Setting up the environment and FabSim3
 ~~~~~~~~
@@ -34,7 +43,7 @@ then, login to the image by typing:
 
     docker run --rm -ti ha3546/vecma_turing_workshop
 
-Within the container, you can start a Python interpreter using ``python3`` or ``ipython`` to
+Within the container, you can start a Python interpreter using ``python3`` to
 run the following commands. Alternatively we describe how to automate the entire workflow
 from the shell using FabSim.
 
@@ -42,7 +51,7 @@ Setting up the model
 ~~~~~~~~
 
 In Uncertainty Quantification (UQ) workflows, we would like to learn about a complex simulator that
-we think describes (imperfectly) the real world. These simulations are usually computationally
+describes the real world (imperfectly). These simulations are usually computationally
 intensive and the outputs are very sensitive to the inputs, making it hard to use them directly to
 compare with observations.
 
@@ -70,17 +79,17 @@ the fault.
    :width: 405 px
    :align: center
 
-   Snapshot of an earthquake simulation. The bumpy line is the fault surface. Color
+   Snapshot of an earthquake simulation. The bumpy line is the fault surface. The color
    scale represents the ground motions from the resulting earthquake as the elastic
    waves carry the stress changes from the slip propagate through the medium.
 
 Complicating matters is the fact that earthquake faults are not smooth planes, but instead rough
 bumpy surfaces with a fractal geometry. An important consequence of this is that the *smallest*
-bumps have the largest effect on the resulting forces. This is what makes earthquake problems so
-challenging to model: at a given model resolution, you are omitting details that play an important
-role. This small scale roughness that is left out of the model must instead be accounted for when
-setting the strength of the fault. However, for this demonstration we will assume that both the
-rough geometry of the fault and the fault strength are known in advance, and it is just the
+waavelength bumps have the largest effect on the resulting forces. This is what makes earthquake
+problems challenging to model: at a given model resolution, you are omitting details that play an
+important role. This small scale roughness that is left out of the model must instead be accounted
+for when setting the strength of the fault. However, for this demonstration we will assume that
+both the rough geometry of the fault and the fault strength are known in advance, and it is just the
 initial stress (forces) that must be inferred. This tutorial will show how a UQ workflow can be
 used to estimate the fault stresses for a given earthquake size.
 
@@ -125,8 +134,7 @@ more careful about this since we only get a limited number of runs. It is probab
 some of our simulations sample low values of the inputs, some high values, and try and do a decent job
 of mixing up the different values. This can be done by using a Latin Hypercube, which ensures that
 samples are drawn from each quantile of the distribution of each parameter that is varied. The
-``mogp_emulator`` package has a built-in class for generating these types of samples, which is
-illustrated in the wrapper function that follows: ::
+``mogp_emulator`` package has a built-in class for generating these types of samples: ::
 
    import numpy as np
    import mogp_emulator
@@ -145,7 +153,7 @@ where each tuple gives the min/max value that each parameter should take. To cre
 we simply use the ``sample`` method, which requires the number of points that should be included in
 the design.
 
-The return value from input_points is a numpy array with shape ``(20, 3)`` as we
+``input_points`` is a numpy array with shape ``(20, 3)`` as we
 have 20 design points, each containing 3 parameters. We can iterate over this to get each successive
 point where we need to run the simulation.
 
@@ -177,24 +185,38 @@ MacBook Pro, so the entire design will take several minutes to run.
 
    results = np.array(results)
 
-Within FabSim you can also do this on the command line using:
+While this procedure might be okay for this demo, in real situations these runs would be much more
+expensive and need to be run on a supercomputer. Runs on a supercomputer will be much harder to
+manage in this fashion, as jobs will need to be created and submitted separately according to the
+submission details of the particular supercomputer, and then we would need to have a way to collect
+all of the results to run the analysis below. This will be hard to manage even for a modest number of
+simulations. Thus, we have automated this process using FabSim3 to show a better method for handling
+ensembles of simulations in a UQ workflow.
+
+Within FabSim you can do this on the command line using:
 ::
 
    fab localhost mogp_ensemble:demo,sample_points=20
 
 You can set the random seed for the Latin Hypercube sampling by passing ``seed=<seed>`` along with the
-number of sample points(separate any arguments with a comma). The ``mogp_ensemble`` workflow will
+number of sample points (separate any arguments with a comma). The ``mogp_ensemble`` workflow will
 automatically sample the Latin Hypercube to create the desired number of points, set up all of the
 necessary simulations, and run them. The advantage of using this approach over the manual approach
 described above is that the runs are each performed in individual directories, with input, output and
 environment curated accordingly. This makes it very easy to reproduce individual runs, and also helps
-with the diagnostics in case some of the simulations exhibit unexpected behaviors.
+with the diagnostics in case some of the simulations exhibit unexpected behaviours.
+
 
 
 Executing the simulations on a remote resource
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-**(Derek & Hamid to fill in this section)**
+Although this tutorial session is too short to set up and showcase the application on a remote resource, we do want to explain how you can do this for your machine of choice.
+
+Essentially, you need to do three steps:
+1. Create a machine definition for your resource of interest in FabSim3 (if there is not one already). How to do this is explained here: https://github.com/djgroen/FabSim3/blob/master/doc/CreateMachineDefinitions.md
+2. Adding your user_specific information (such as account name and home directory) to `machines_user.yml`.
+3. Replace the 'localhost' part of your FabSim ensemble command with the name of your machine. For example, if your machine is "archer", then you could change `fabsim localhost mogp_ensemble:demo,sample_points=20` into `fabsim archer mogp_ensemble:demo,sample_points=20`.
 
 Analysing the Results
 ~~~~~~~~~~~~~~~~~~~~~
@@ -204,7 +226,7 @@ Collecting the Results
 
 If the simulations were run within the Python interpreter we do not need to do anything to collect
 the results; however if simulations were run using FabSim, then we need to fetch the results and
-load them into the python interpreter. From the shell, to fetch the results we simple need to enter: ::
+load them into the python interpreter. From the shell, to fetch the results we simply need to enter: ::
 
    fab localhost fetch_results
 
@@ -216,10 +238,11 @@ Once the results have been collected, to re-load the input points, results, and 
 
    from mogp_functions import load_results
 
-   results_dir = "results/demo_localhost_16"
+   results_dir = <path_to_results>/demo_localhost_16
    input_points, results, ed = load_results(results_dir)
 
-This should allow you to proceed with the following Python analysis commands.
+You will need to set the appropriate directory where the results are collected. Fortunately, FabSim can
+manage this for you when you run the analysis using the FabSim commands specified below.
 
 Creating the surrogate model
 ----------------------------
@@ -229,15 +252,20 @@ the parameter space. We can fit a Gaussian Process to the results using the ``Ga
 
    gp = mogp_emulator.GaussianProcess(input_points, results)
 
-This just creates the GP class. In order to make predictions, we need to fit the model to the data.
-The class has several methods of doing this, but the simplest is to use the maximum marginal likelihood,
-which is easy to compute for a GP: ::
+This just creates the GP class. Gaussian Processes are a non-parametric model for regression that approximates
+the complex simulator function as a multivariate normal distribution. In simple terms, a GP interpolates
+between the known simulation points in a robust way and provides uncertainty estimates for any predictions
+that it makes. Because it has an uncertainty estimate, it is commonly used in UQ workflows.
+
+In order to make predictions, we need to fit the model to the data. The class has several methods of doing this,
+but the simplest is to use the maximum marginal likelihood, which is easy to compute for a GP: ::
 
    gp.learn_hyperparameters()
 
 This finds a set of correlations lengths, the hyperparameters of the GP, that maximises the marginal
-log-likelihood. Once these parameters are estimated, we can make predictions efficiently for unknown
-parameter values.
+log-likelihood and determines how the GP interpolates between unknown points. Once these parameters are
+estimated, we can make predictions efficiently for unknown parameter values and have estimates of
+the uncertainty.
 
 Making Predictions
 ------------------
@@ -275,25 +303,21 @@ implausibility:
    computational model represents reality.
 
 In practice, 1. and 2. are straightforward to determine, while 3. is much trickier. However, many
-studies have shown that not accounting for model discrepancy leads to overconfident predictions,
-so this is essential to consider to give a thorough UQ treatment to a computational model.
-However, estimating model uncertainty is in itself a difficult (and often subjective) task, and
-is beyond the scope of this tutorial, as it requires knowledge about the approximations made in the
-simulation. Thus, we will restrict ourselves to only accounting for uncertainty in the approximate model
-in this tutorial, but note that realistic UQ assessments require careful scrutiny and awareness of the
-limitations of computational models.
+studies have shown that not accounting for model discrepancy leads to `overconfident predictions
+<https://doi.org/10.1111/1467-9868.00294>`_, so this is essential to consider to give a thorough
+UQ treatment to a computational model. However, estimating model uncertainty is in itself a difficult
+(and often subjective) task, and is beyond the scope of this tutorial, as it requires knowledge about
+the approximations made in the simulation. Thus, we will restrict ourselves to only accounting for
+uncertainty in the approximate model in this tutorial, but note that realistic UQ assessments 
+require careful scrutiny and awareness of the limitations of computational models.
 
 To compute the implausibility, we need to know the observation (which we will choose arbitrarily
 here; reasonable values to consider range from 40 to 250) and the model predictions/uncertainties
-(referred to as``expectations`` here). These can be passed directly to the ``HistoryMatching`` class
-when creating it (or prior to computing the implausibility): ::
+(referred to as``expectations`` in the ``HistoryMatching`` class). These can be passed directly to
+the ``HistoryMatching`` class when creating it (or prior to computing the implausibility): ::
 
-   analysis_samples = 10000
    threshold = 3.
    known_value = 58.
-
-   analysis_points = ed.sample(analysis_samples)
-   predictions = gp.predict(analysis_points)
 
    hm = mogp_emulator.HistoryMatching(obs=known_value, expectations=predictions,
                                       threshold=threshold)
@@ -301,8 +325,11 @@ when creating it (or prior to computing the implausibility): ::
    implaus = hm.get_implausibility()
    NROY = hm.get_NROY()
 
-Once we have computed the implausibility, we can figure out which points can be ruled out (known as NROY, Not Ruled Out Yet). We assume this to be 3 standard deviations, though this could be made larger
-if we would like to be more conservative. The NROY points provide us with one simple way to visualise
+Once we have computed the implausibility, we can figure out which points can be ruled out
+(known as NROY, Not Ruled Out Yet). We assume this threshold to be 3 standard deviations, though this could
+be made larger if we would like to be more conservative. The ``NROY`` variable here is just a list of indices
+that have not been ruled out yet from all of our sample points, we we can use the indexing capabilities of
+numpy to get the NROY points. The NROY points provide us with one simple way to visualise
 the results: ::
 
    import matplotlib.pyplot as plt
@@ -356,26 +383,29 @@ seismic moment. This means that the sensitivity of the earthquake size to the st
 a useful constraint, as there is only a small range of stress conditions that can produce an
 earthquake of a particular size. However, note that many of the other things that were assumed to be
 known here (friction, fault geometry, how the earthquake initiates) are in practice not well understood,
-meaning that realistic applications of this sort will be much more uncertain. However, this tutorial
-illustrates the essence of the UQ workflow and how it can be used to constrain complex models with
-observations.
+meaning that realistic applications of this sort will be much more uncertain once all of these other
+aspects of the simulation are varied. However, this tutorial illustrates the essence of the UQ workflow
+and how it can be used to constrain complex models with observations.
 
 Automating the Analysis
 -----------------------
 
 We have provided two ways to run the above set of analysis commands and plotting commands. To
 run the entire thing within the Python interpreter, import the ``run_mogp_analysis`` function
-from ``mogp_function``. This function requires 4 inputs: ``analysis_points``, ``known_value``,
-``threshold``, and ``results_dir`` (all of these variables are defined above). This should
-run the analysis and create the plots.
+from the ``mogp_function`` module. This function requires 4 inputs:
+``analysis_points``, ``known_value``, ``threshold``, and ``results_dir``
+(all of these variables are defined above). This should run the analysis and create the plots.
 
 Alternatively, we have set up a FabSim command to do this for you that accepts all of the
-above options (default values are the ones provided above for everything except ``results_dir``).
+above options (default values are the ones provided above for everything except ``results_dir``,
+which is likely to be ``demo_localhost_16`` for the docker container we have provided).
 To run the analysis using FabSim, enter the following on the command line: ::
 
    fab localhost mogp_analysis:demo,demo_localhost_16
 
-This
+This will run the analysis and create the plots in the ``results`` directory within the FabSim
+installation. You should be able to view these if you correctly mounted a shared directory between
+your local machine and this directory in the container.
 
 Running the whole thing automated from the command line:
 ~~~~~~~~~~~~~~
@@ -395,9 +425,15 @@ Some things in the UQ workflow that you can vary to see how they effect the resu
 
 * Change the number of sample points (note that you can only do this up to a limit given
   the number of simulations you have to run!)
-* Change the parameter range of the sample space (this will re-run the simulations, so be
-  wary of the time needed to run the earthquake simulations)
-* Change the number of query points that are used in history matching
+* Change the random seed to draw a different set of samples for the Latin Hypercube samples
+* Change the number of analysis points that are used in history matching
 * Change the threshold for determining the NROY points
-* Change the "known" value of the seismic moment (try values from 40 to 250; outside of that
+* Change the ``known_value`` of the seismic moment (try values from 40 to 250; outside of that
   range you are likely to rule out the entire space!)
+
+
+References
+##########
+.. [Hoekstra2019] Hoekstra, Alfons G., Simon Portegies Zwart, and Peter V. Coveney. "Multiscale modelling, simulation and computing: from the desktop to the exascale." (2019): 20180355.
+.. [Tang1993] Tang, Boxin. "Orthogonal array-based Latin hypercubes." Journal of the American statistical association 88.424 (1993): 1392-1397.
+.. [Groen2019] Groen, Derek, et al. "Introducing VECMAtk-Verification, Validation and Uncertainty Quantification for Multiscale and HPC Simulations." International Conference on Computational Science. Springer, Cham, 2019.
