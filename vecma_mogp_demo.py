@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import mogp_emulator
 from earthquake import create_problem, run_simulation, compute_moment
+import matplotlib.pyplot as plt
+import matplotlib.tri
 
 # This demo runs an earthquake simulation that depends on an input stress tensor and outputs
 # an earthquake size (related to the seismic moment, which is something that can be measured).
@@ -73,9 +75,11 @@ gp = mogp_emulator.GaussianProcess(input_points, results)
 gp.learn_hyperparameters()
 
 # We can now make predictions for a large number of input points much more quickly than running the
-# simulation. For instance, let's sample 1000 points
+# simulation. For instance, let's sample 10000 points
 
-query_points = ed.sample(1000)
+np.random.seed()
+
+query_points = ed.sample(10000)
 predictions = gp.predict(query_points)
 
 # predictions contains both the mean values and variances from the approximate model, so we can use this
@@ -84,11 +88,8 @@ predictions = gp.predict(query_points)
 # Since we don't have an actual observation to use, we will do a synthetic test by running an additional
 # point so we can evaluate the results from the known inputs.
 
-known_input = ed.sample(1)
-name="known_value"
-create_problem(known_input[0], name=name)
-run_simulation(name=name, n_proc=4)
-known_value = compute_moment(name=name)
+known_value = 58.
+threshold = 3.
 
 # One easy method for comparing a model with observations is known as History Matching, where you
 # compute an implausibility measure for many sample points given all sources of uncertainty
@@ -102,15 +103,70 @@ known_value = compute_moment(name=name)
 # query points (coords), and predicted values (expectations), plus a threshold above which we can
 # rule out a point
 
-hm = mogp_emulator.HistoryMatching(obs=known_value, coords=query_points, expectations=predictions,
-                                   threshold=2.)
+hm = mogp_emulator.HistoryMatching(obs=known_value, expectations=predictions,
+                                   threshold=threshold)
 
 implaus = hm.get_implausibility()
+NROY = hm.get_NROY()
 
-# We can see which points have not been ruled out yet (NROY) based on the implausibility threshold.
+# now make a plot to visualize the space
 
-print("Actual point:", known_input[0])
-print("NROY:")
-print(query_points[hm.get_NROY()])
+# need to normalize outputs to triangulate plot
 
+norm_points = np.zeros(query_points.shape)
+norm_points[:,0] = -(query_points[:,0]-80.)/40.
+norm_points[:,1] =  (query_points[:,1]-0.1)/0.3
+norm_points[:,2] =  (query_points[:,2]-0.9)/0.2
 
+# select the projection of input space that we want to view
+
+axis1 = 1
+axis2 = 0
+
+# function to generate correct plot lables
+
+def label_generator(axis):
+    if axis == 0:
+        label = "Fault Compressive Stress (MPa)"
+    elif axis == 1:
+        label = "Shear to Normal Stress Ratio"
+    elif axis == 2:
+        label = "Out of Plane to In Plane Stress ratio"
+    else:
+        raise ValueError("Bad value for axis")
+
+    return label
+
+def limits_generator(axis):
+    if axis == 0:
+        limits = (-120., -80.)
+    elif axis == 1:
+        limits = (0.1, 0.4)
+    elif axis == 2:
+        limits = (0.9, 1.1)
+    else:
+        raise ValueError("Bad value for axis")
+
+    return limits
+
+tri = matplotlib.tri.Triangulation(norm_points[:,axis1], norm_points[:,axis2])
+
+plt.figure(figsize=(4,3))
+plt.tripcolor(query_points[:,axis1], query_points[:,axis2], tri.triangles, implaus, vmin=0., vmax=6., cmap="viridis_r")
+cb = plt.colorbar()
+cb.set_label("Implausibility")
+#plt.plot(known_input[0,axis1], known_input[0,axis2], "or")
+plt.xlabel(label_generator(axis1))
+plt.ylabel(label_generator(axis2))
+plt.title("Implausibility Metric")
+plt.savefig("implausibility.png", dpi=200, bbox_inches="tight")
+
+plt.figure(figsize=(4,3))
+plt.scatter(query_points[hm.get_NROY(), axis1], query_points[hm.get_NROY(), axis2])
+plt.xlim(limits_generator(axis1))
+plt.ylim(limits_generator(axis2))
+plt.xlabel(label_generator(axis1))
+plt.ylabel(label_generator(axis2))
+plt.title("NROY points")
+plt.savefig("nroy.png", dpi=200, bbox_inches="tight")
+plt.show()
