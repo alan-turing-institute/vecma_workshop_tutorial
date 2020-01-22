@@ -118,7 +118,7 @@ MacBook Pro, so the entire design will take several minutes to run.
 Within FabSim you can also do this on the command line using:
 ::
 
-    fab localhost mogp_ensemble:demo,sample_points=20
+    fabsim localhost mogp_ensemble:demo,sample_points=20
     
 
 The advantage of using this approach is that the runs are each performed in individual directories, with input, output and environment curated accordingly. This makes it very easy to reproduce individual runs, and also helps with the diagnostics in case some of the simulations exhibit unexpected behaviors.
@@ -127,7 +127,12 @@ The advantage of using this approach is that the runs are each performed in indi
 Executing the simulations on a remote resource
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-**(Derek & Hamid to fill in this section)**
+Although this tutorial session is too short to set up and showcase the application on a remote resource, we do want to explain how you can do this for your machine of choice.
+
+Essentially, you need to do three steps:
+1. Create a machine definition for your resource of interest in FabSim3 (if there is not one already). How to do this is explained here: https://github.com/djgroen/FabSim3/blob/master/doc/CreateMachineDefinitions.md
+2. Adding your user_specific information (such as account name and home directory) to `machines_user.yml`.
+3. Replace the 'localhost' part of your FabSim ensemble command with the name of your machine. For example, if your machine is "archer", then you could change `fabsim localhost mogp_ensemble:demo,sample_points=20` into `fabsim archer mogp_ensemble:demo,sample_points=20`.
 
 Creating a surrogate model
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -199,7 +204,7 @@ Running the whole thing automated from the command line:
 You can run the full simulation workflow by using:
 ::
 
-    fab localhost mogp_ensemble:demo,sample_points=20
-    fab localhost fetch_results
-    fab localhost mogp_analysis:demo,demo_localhost_16
+    fabsim localhost mogp_ensemble:demo,sample_points=20
+    fabsim localhost fetch_results
+    fabsim localhost mogp_analysis:demo,demo_localhost_16
 
