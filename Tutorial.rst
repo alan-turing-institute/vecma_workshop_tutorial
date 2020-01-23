@@ -231,7 +231,7 @@ MacBook Pro, so the entire design will take several minutes to run.
 
    # mogp_emulator code
 
-   from earthquake import create_problem, run_simulation
+   from plugins.fabmogp.earthquake import create_problem, run_simulation
 
    results = []
    counter = 1
@@ -321,7 +321,7 @@ Once the results have been collected, to re-load the input points, results, and 
 
    # mogp_emulator code
 
-   from mogp_functions import load_results
+   from plugins.fabmogp.mogp_functions import load_results
 
    results_dir = <path_to_results>/demo_localhost_16
    input_points, results, ed = load_results(results_dir)
