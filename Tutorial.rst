@@ -39,11 +39,11 @@ To download the Docker image, you can use:
    
    docker pull ha3546/vecma_turing_workshop
 
-then, login to the image by typing:
+then, create an empty folder on your PC, and login to the image by typing:
 
 .. code:: bash
 
-   docker run --rm -ti ha3546/vecma_turing_workshop
+   docker run --rm -v <PATH_to_your_folder>:/home/root/turing_workshop/FabSim3/results -ti ha3546/vecma_turing_workshop
 
 Within the container, you can start a Python interpreter using ``python3`` to
 run the following commands. Alternatively we describe how to automate the entire workflow
