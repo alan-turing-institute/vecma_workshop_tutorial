@@ -22,8 +22,9 @@ Although we focus mainly on the Mogp emulator to do sampling in this tutorial, w
 same workflow could be established using an alternative tool, namely the
 `EasyVVUQ component <http://easyvvuq.readthedocs.io>`_ in the VECMA toolkit.
 
-    **About FabSim3**
-    FabSim3 is an automation toolkit.
+    **Sidebar: About FabSim3**
+    
+    FabSim3 is an toolkit for user-developers to help automate computational workflows involving many simulations and remote resources. It has been used in a variety of disciplines, for instance to facilitate coupled atomistic / coarse-grained materials simulations and to perform large-scale sensitivity analysis of agent-based migration models. The tool is open-source (BSD 3-clause license) and one of the main components of the `VECMA toolkit <http://www.vecma-toolkit.eu>'_.
 
 In addition, we will perform tasks on only on your local host due to time constraints of this session, but we will provide clear instructions on how you can scale up various aspects of this approach, and use FabSim3 to run the same ensembles on remote machines such as supercomputers.
 
