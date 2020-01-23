@@ -34,12 +34,14 @@ is called FabMogp, and you can find it at: https://github.com/edaub/fabmogp
 To set up Docker, please refer to the documentation provided `here <https://www.docker.com/get-started>`_
 
 To download the Docker image, you can use:
-.. code-block:: bash
+
+.. code:: bash
 
     docker pull ha3546/vecma_turing_workshop
 
 then, login to the image by typing:
-.. code-block:: bash
+
+.. code:: bash
 
     docker run --rm -ti ha3546/vecma_turing_workshop
 
@@ -134,8 +136,9 @@ more careful about this since we only get a limited number of runs. It is probab
 some of our simulations sample low values of the inputs, some high values, and try and do a decent job
 of mixing up the different values. This can be done by using a Latin Hypercube, which ensures that
 samples are drawn from each quantile of the distribution of each parameter that is varied. The
-``mogp_emulator`` package has a built-in class for generating these types of samples: ::
+``mogp_emulator`` package has a built-in class for generating these types of samples:
 
+.. code:: python
    import numpy as np
    import mogp_emulator
 
@@ -168,8 +171,7 @@ multiple cores available you can specify more processors to run the
 simulation. Each simulation takes about 20 seconds on 4 processors on my
 MacBook Pro, so the entire design will take several minutes to run.
 
-::
-
+.. code:: python
    from earthquake import create_problem, run_simulation
 
    results = []
@@ -194,8 +196,8 @@ simulations. Thus, we have automated this process using FabSim3 to show a better
 ensembles of simulations in a UQ workflow.
 
 Within FabSim you can do this on the command line using:
-::
 
+.. code:: bash
    fab localhost mogp_ensemble:demo,sample_points=20
 
 You can set the random seed for the Latin Hypercube sampling by passing ``seed=<seed>`` along with the
@@ -226,8 +228,9 @@ Collecting the Results
 
 If the simulations were run within the Python interpreter we do not need to do anything to collect
 the results; however if simulations were run using FabSim, then we need to fetch the results and
-load them into the python interpreter. From the shell, to fetch the results we simply need to enter: ::
+load them into the python interpreter. From the shell, to fetch the results we simply need to enter:
 
+.. code:: bash
    fab localhost fetch_results
 
 This will collate all of the results into a subdirectory of the ``results`` directory within the
@@ -236,6 +239,7 @@ Once the results have been collected, to re-load the input points, results, and 
 ``LatinHypercubeDesign`` class that created them we have provided a convenience function
 ``load_results`` in the ``mogp_functions`` module: ::
 
+.. code:: python
    from mogp_functions import load_results
 
    results_dir = <path_to_results>/demo_localhost_16
@@ -250,6 +254,7 @@ Creating the surrogate model
 Once we have run all of the input points, we can proceed with fitting the approximate model and analysing
 the parameter space. We can fit a Gaussian Process to the results using the ``GaussianProcess`` class: ::
 
+.. code:: python
    gp = mogp_emulator.GaussianProcess(input_points, results)
 
 This just creates the GP class. Gaussian Processes are a non-parametric model for regression that approximates
@@ -260,6 +265,7 @@ that it makes. Because it has an uncertainty estimate, it is commonly used in UQ
 In order to make predictions, we need to fit the model to the data. The class has several methods of doing this,
 but the simplest is to use the maximum marginal likelihood, which is easy to compute for a GP: ::
 
+.. code:: python
    gp.learn_hyperparameters()
 
 This finds a set of correlations lengths, the hyperparameters of the GP, that maximises the marginal
@@ -273,8 +279,9 @@ Making Predictions
 To analyse the full parameter space, we need to draw a large number of samples from the full space. As
 before, we do this using our Latin Hypercube Design (which ensures that the points we choose are spread
 out across the full parameter space), but since we do not need to run the computationally intensive
-simulation for each one, we can draw many more samples (say, 10,000 in this case): ::
+simulation for each one, we can draw many more samples (say, 10,000 in this case):
 
+.. code:: python
    analysis_points = 10000
 
    query_points = ed.sample(analysis_points)
@@ -314,8 +321,9 @@ require careful scrutiny and awareness of the limitations of computational model
 To compute the implausibility, we need to know the observation (which we will choose arbitrarily
 here; reasonable values to consider range from 40 to 250) and the model predictions/uncertainties
 (referred to as``expectations`` in the ``HistoryMatching`` class). These can be passed directly to
-the ``HistoryMatching`` class when creating it (or prior to computing the implausibility): ::
+the ``HistoryMatching`` class when creating it (or prior to computing the implausibility):
 
+.. code:: python
    threshold = 3.
    known_value = 58.
 
@@ -330,8 +338,9 @@ Once we have computed the implausibility, we can figure out which points can be 
 be made larger if we would like to be more conservative. The ``NROY`` variable here is just a list of indices
 that have not been ruled out yet from all of our sample points, we we can use the indexing capabilities of
 numpy to get the NROY points. The NROY points provide us with one simple way to visualise
-the results: ::
+the results:
 
+.. code:: python
    import matplotlib.pyplot as plt
 
    plt.figure()
@@ -357,6 +366,7 @@ shear/normal stress and the normal stress (the moment is much less sensitive to 
 stress component). We can also make a pseudocolor plot showing the implausibility metric projected
 into this plane:
 
+.. code:: python
    import matplotlib.tri
 
    plt.figure()
@@ -399,8 +409,9 @@ from the ``mogp_function`` module. This function requires 4 inputs:
 Alternatively, we have set up a FabSim command to do this for you that accepts all of the
 above options (default values are the ones provided above for everything except ``results_dir``,
 which is likely to be ``demo_localhost_16`` for the docker container we have provided).
-To run the analysis using FabSim, enter the following on the command line: ::
+To run the analysis using FabSim, enter the following on the command line:
 
+.. code:: bash
    fab localhost mogp_analysis:demo,demo_localhost_16
 
 This will run the analysis and create the plots in the ``results`` directory within the FabSim
@@ -412,8 +423,8 @@ Running the whole thing automated from the command line:
 
 
 You can run the full simulation workflow by using:
-::
 
+.. code:: bash
    fab localhost mogp_ensemble:demo,sample_points=20
    fab localhost fetch_results
    fab localhost mogp_analysis:demo,demo_localhost_16
