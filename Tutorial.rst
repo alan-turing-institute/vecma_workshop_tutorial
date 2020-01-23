@@ -51,6 +51,7 @@ is called FabMogp, and you can find it at: https://github.com/edaub/fabmogp
 To set up Docker, please refer to the documentation provided `here <https://www.docker.com/get-started>`_
 
    **Sidebar: code blocks in this tutorial**
+   
    Throughout the tutorial, we will highlight how to run the computational
    workflow from the bash shell. These commands will be highlighted in code boxes with no preamble code comments.
    Additionally, we will illustrate the underlying mogp_emulator Python code in code blocks. These will include a
@@ -92,6 +93,7 @@ the area that slipped increases (in nature, these two quantities are correlated 
 get bigger by both increasing the slip and the area simulataneously).
 
    **Sidebar: fdfault**
+   
    To run the earthquake simulations, we are using the fdfault application. fdfault is a high
    performance, parallelized finite difference code for simulation of frictional failure and
    wave propagation in elastic-plastic media. It features high order finite difference methods
@@ -193,6 +195,7 @@ we simply use the ``sample`` method, which requires the number of points that sh
 the design.
 
    **Sidebar: other sampling methods in mogp_emulator**
+   
    mogp_emulator also implements Monte Carlo sampling and MICE (Mutual Information for Computer Experiments).
    MICE is a sequential design algorithm that chooses simulation points one at a time (or in batches) based
    on fitting a Gaussian Process to the intermediate results at each step. Usually, this additional overhead
@@ -279,11 +282,21 @@ Essentially, you need to do three steps:
 
     **Sidebar: where do I find a suitable larger resource?**
     
-    Unfortunately the national `ARCHER supercomputer <http://www.archer.ac.uk/>`_ is about to be decommissioned, but there are a few alternatives available. Several UK universities have so-called *Tier-2* resources available, which can support runs using thousands of cores, and one can also choose to buy time on the Cloud. For larger needs, one will need to look abroad, for instance by writing a proposal for `PRACE (preparatory) access <http://www.prace-ri.eu/>`_ or contacting other foreign supercomputer centres. Of course this is not an ideal situation, so we as authors of this tutorial happily endorse any effort to try and establish more suitable large-scale resources here in the UK.
+    Unfortunately the national `ARCHER supercomputer <http://www.archer.ac.uk/>`_ is about to be decommissioned, but 
+    there are a few alternatives available. Several UK universities have so-called *Tier-2* resources available, which 
+    can support runs using thousands of cores, and one can also choose to buy time on the Cloud. For larger needs, one 
+    will need to look abroad, for instance by writing a proposal for `PRACE (preparatory) access 
+    <http://www.prace-ri.eu/>`_ or contacting other foreign supercomputer centres. Of course this is not an ideal 
+    situation, so we as authors of this tutorial happily endorse any effort to try and establish more suitable 
+    large-scale resources here in the UK.
     
     **Sidebar: running large ensembles on large machines**
     
-    Most clusters and supercomputers have queuing systems that enable users to run a small ensemble of 5-20 jobs. However, larger ensembles can be rejected by queuing systems due to policy constraints meant to prevent scheduler overload. To circumvent this issue, one can choose to use a Pilot Job framework. Within the VECMA toolkit we provide `QCG-PilotJob <https://github.com/vecma-project/QCG-PilotJob>`_, a component which supports all major machines using the SLURM scheduler.
+    Most clusters and supercomputers have queuing systems that enable users to run a small ensemble of 5-20 jobs. 
+    However, larger ensembles can be rejected by queuing systems due to policy constraints meant to prevent scheduler 
+    overload. To circumvent this issue, one can choose to use a Pilot Job framework. Within the VECMA toolkit we provide 
+    `QCG-PilotJob <https://github.com/vecma-project/QCG-PilotJob>`_, a component which supports all major machines using the 
+    SLURM scheduler.
     
 Analysing the Results
 ~~~~~~~~~~~~~~~~~~~~~
@@ -348,6 +361,7 @@ estimated, we can make predictions efficiently for unknown parameter values and 
 the uncertainty.
 
    **Sidebar: other options in the Gaussian Process surrogate model**
+   
    A Gaussian Process requires specification of a mean function and a covariance kernel in order to
    perform the necessary calculations. We have several built-in kernels (the popular squared exponential and
    Matern 5/2 kernels), though the user can easily define additional stationary kernels. The current tutorial
@@ -405,6 +419,17 @@ UQ treatment to a computational model. However, estimating model uncertainty is 
 the approximations made in the simulation. Thus, we will restrict ourselves to only accounting for
 uncertainty in the approximate model in this tutorial, but note that realistic UQ assessments 
 require careful scrutiny and awareness of the limitations of computational models.
+
+   **Sidebar: other calibration techniques**
+   
+   An advantage of history matching is that it is conceptually simple and can still provide useful
+   information even if the surrogate model is uncertain about parts of the parameter space. However,
+   it has the disadvantage that it only tells you about what parts of the space can be ruled out,
+   not what are better choices from within the space that has not been ruled out. For full Bayesian
+   calibration, one needs to specify the priors for all model parameters and an emulator that
+   can accurately estimate the simulator output at any point. Then one can use MCMC sampling or other
+   Bayesian estimation techniques to determine the posterior distribution of the input parameters.
+   Full Bayesian calibration technqiues are not currently implemented in mogp_emulator.
 
 To compute the implausibility, we need to know the observation (which we will choose arbitrarily
 here; reasonable values to consider range from 40 to 250) and the model predictions/uncertainties
