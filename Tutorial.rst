@@ -433,7 +433,7 @@ Some things in the UQ workflow that you can vary to see how they effect the resu
 
 
 References
-##########
-.. [Hoekstra2019] Hoekstra, Alfons G., Simon Portegies Zwart, and Peter V. Coveney. "Multiscale modelling, simulation and computing: from the desktop to the exascale." (2019): 20180355.
+~~~~~~~~~~
+.. [Hoekstra2019] Hoekstra, Alfons G., Simon Portegies Zwart, and Peter V. Coveney. "Multiscale modelling, simulation and   computing: from the desktop to the exascale." (2019): 20180355.
 .. [Tang1993] Tang, Boxin. "Orthogonal array-based Latin hypercubes." Journal of the American statistical association 88.424 (1993): 1392-1397.
 .. [Groen2019] Groen, Derek, et al. "Introducing VECMAtk-Verification, Validation and Uncertainty Quantification for Multiscale and HPC Simulations." International Conference on Computational Science. Springer, Cham, 2019.
