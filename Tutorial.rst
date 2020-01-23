@@ -240,7 +240,7 @@ This will collate all of the results into a subdirectory of the ``results`` dire
 FabSim installation (within the Docker container, this is likely to be ``demo_localhost_16``).
 Once the results have been collected, to re-load the input points, results, and the
 ``LatinHypercubeDesign`` class that created them we have provided a convenience function
-``load_results`` in the ``mogp_functions`` module: ::
+``load_results`` in the ``mogp_functions`` module:
 
 .. code:: python
 
@@ -256,7 +256,7 @@ Creating the surrogate model
 ----------------------------
 
 Once we have run all of the input points, we can proceed with fitting the approximate model and analysing
-the parameter space. We can fit a Gaussian Process to the results using the ``GaussianProcess`` class: ::
+the parameter space. We can fit a Gaussian Process to the results using the ``GaussianProcess`` class:
 
 .. code:: python
 
@@ -268,7 +268,7 @@ between the known simulation points in a robust way and provides uncertainty est
 that it makes. Because it has an uncertainty estimate, it is commonly used in UQ workflows.
 
 In order to make predictions, we need to fit the model to the data. The class has several methods of doing this,
-but the simplest is to use the maximum marginal likelihood, which is easy to compute for a GP: ::
+but the simplest is to use the maximum marginal likelihood, which is easy to compute for a GP:
 
 .. code:: python
 
