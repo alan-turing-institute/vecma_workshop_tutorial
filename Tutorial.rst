@@ -34,13 +34,13 @@ is called FabMogp, and you can find it at: https://github.com/edaub/fabmogp
 To set up Docker, please refer to the documentation provided `here <https://www.docker.com/get-started>`_
 
 To download the Docker image, you can use:
-.. code-block::
+.. code-block:: python
   :emphasize-lines: 2
 
     docker pull ha3546/vecma_turing_workshop
 
 then, login to the image by typing:
-.. code-block::
+.. code-block:: python
 
     docker run --rm -ti ha3546/vecma_turing_workshop
 
