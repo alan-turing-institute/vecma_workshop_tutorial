@@ -246,6 +246,9 @@ MacBook Pro, so the entire design will take several minutes to run.
 
    results = np.array(results)
 
+(Note that the earthquake functions are located in the plugin repository, so you would need to
+use the full import path to access these functions directly.)
+
 While this procedure might be okay for this demo, in real situations these runs would be much more
 expensive and need to be run on a supercomputer. Runs on a supercomputer will be much harder to
 manage in this fashion, as jobs will need to be created and submitted separately according to the
@@ -315,7 +318,7 @@ This will collate all of the results into a subdirectory of the ``results`` dire
 FabSim installation (within the Docker container, this is likely to be ``demo_localhost_16``).
 Once the results have been collected, to re-load the input points, results, and the
 ``LatinHypercubeDesign`` class that created them we have provided a convenience function
-``load_results`` in the ``mogp_functions`` module:
+``load_results`` in the ``mogp_functions`` file in the fabmogp plugin:
 
 .. code:: python
 
