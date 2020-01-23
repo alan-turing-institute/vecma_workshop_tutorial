@@ -36,14 +36,14 @@ To set up Docker, please refer to the documentation provided `here <https://www.
 To download the Docker image, you can use:
 
 .. code:: bash
-
-    docker pull ha3546/vecma_turing_workshop
+   
+   docker pull ha3546/vecma_turing_workshop
 
 then, login to the image by typing:
 
 .. code:: bash
 
-    docker run --rm -ti ha3546/vecma_turing_workshop
+   docker run --rm -ti ha3546/vecma_turing_workshop
 
 Within the container, you can start a Python interpreter using ``python3`` to
 run the following commands. Alternatively we describe how to automate the entire workflow
@@ -139,6 +139,7 @@ samples are drawn from each quantile of the distribution of each parameter that 
 ``mogp_emulator`` package has a built-in class for generating these types of samples:
 
 .. code:: python
+
    import numpy as np
    import mogp_emulator
 
@@ -172,6 +173,7 @@ simulation. Each simulation takes about 20 seconds on 4 processors on my
 MacBook Pro, so the entire design will take several minutes to run.
 
 .. code:: python
+
    from earthquake import create_problem, run_simulation
 
    results = []
@@ -198,6 +200,7 @@ ensembles of simulations in a UQ workflow.
 Within FabSim you can do this on the command line using:
 
 .. code:: bash
+
    fab localhost mogp_ensemble:demo,sample_points=20
 
 You can set the random seed for the Latin Hypercube sampling by passing ``seed=<seed>`` along with the
@@ -240,6 +243,7 @@ Once the results have been collected, to re-load the input points, results, and 
 ``load_results`` in the ``mogp_functions`` module: ::
 
 .. code:: python
+
    from mogp_functions import load_results
 
    results_dir = <path_to_results>/demo_localhost_16
@@ -255,6 +259,7 @@ Once we have run all of the input points, we can proceed with fitting the approx
 the parameter space. We can fit a Gaussian Process to the results using the ``GaussianProcess`` class: ::
 
 .. code:: python
+
    gp = mogp_emulator.GaussianProcess(input_points, results)
 
 This just creates the GP class. Gaussian Processes are a non-parametric model for regression that approximates
@@ -266,6 +271,7 @@ In order to make predictions, we need to fit the model to the data. The class ha
 but the simplest is to use the maximum marginal likelihood, which is easy to compute for a GP: ::
 
 .. code:: python
+
    gp.learn_hyperparameters()
 
 This finds a set of correlations lengths, the hyperparameters of the GP, that maximises the marginal
@@ -282,6 +288,7 @@ out across the full parameter space), but since we do not need to run the comput
 simulation for each one, we can draw many more samples (say, 10,000 in this case):
 
 .. code:: python
+
    analysis_points = 10000
 
    query_points = ed.sample(analysis_points)
@@ -324,6 +331,7 @@ here; reasonable values to consider range from 40 to 250) and the model predicti
 the ``HistoryMatching`` class when creating it (or prior to computing the implausibility):
 
 .. code:: python
+
    threshold = 3.
    known_value = 58.
 
@@ -341,6 +349,7 @@ numpy to get the NROY points. The NROY points provide us with one simple way to 
 the results:
 
 .. code:: python
+
    import matplotlib.pyplot as plt
 
    plt.figure()
@@ -367,6 +376,7 @@ stress component). We can also make a pseudocolor plot showing the implausibilit
 into this plane:
 
 .. code:: python
+
    import matplotlib.tri
 
    plt.figure()
@@ -412,6 +422,7 @@ which is likely to be ``demo_localhost_16`` for the docker container we have pro
 To run the analysis using FabSim, enter the following on the command line:
 
 .. code:: bash
+
    fab localhost mogp_analysis:demo,demo_localhost_16
 
 This will run the analysis and create the plots in the ``results`` directory within the FabSim
@@ -425,6 +436,7 @@ Running the whole thing automated from the command line:
 You can run the full simulation workflow by using:
 
 .. code:: bash
+
    fab localhost mogp_ensemble:demo,sample_points=20
    fab localhost fetch_results
    fab localhost mogp_analysis:demo,demo_localhost_16
