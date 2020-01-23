@@ -167,7 +167,7 @@ point where we need to run the simulation.
 
     **Sidebar: EasyVVUQ, an alternative tool for scalable sampling**
     
-    In this tutorial we use Mogp for sampling, primarily because we train a surrogate model that relies on its Gaussian process emulation functionalities. For other applications, it's also possible to use EasyVVUQ for sampling and uncertainty quantification. Both tools complement each other, in that Mogp provides Gaussian process emulators, whereas EasyVVUQ has a stronger emphasis on providing sophisticated and scalable sampling and results collation (for instance for use with thousands or millions of jobs on a remote supercomputer). EasyVVUQ is part of the `VECMA toolkit <http://www.vecma-toolkit.eu>`_ and has a documentation site `here <https://easyvvuq.readthedocs.io>`_.
+    In this tutorial we use Mogp for sampling, primarily because we train a surrogate model that relies on its Gaussian process emulation functionalities. For other applications, it's also possible to use EasyVVUQ for sampling and uncertainty quantification. Both tools complement each other, in that Mogp provides Gaussian process emulators, whereas EasyVVUQ has a stronger emphasis on providing sophisticated and scalable sampling and results collation (for instance for use with thousands or millions of jobs on a remote supercomputer). EasyVVUQ is part of the `VECMA toolkit <http://www.vecma-toolkit.eu>`_, has a documentation site `here <https://easyvvuq.readthedocs.io>`_, and a simple separate tutorial `here <https://colab.research.google.com/drive/1qD07_Ry2lOB9-Is6Z2mQG0vVWskNBHjr>`_.
 
 Executing the simulations locally
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
