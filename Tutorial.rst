@@ -25,7 +25,7 @@ same workflow could be established using an alternative tool, namely the
 In addition, we will perform tasks on only on your local host due to time constraints of this session, but we will provide clear instructions on how you can scale up various aspects of this approach, and use FabSim3 to run the same ensembles on remote machines such as supercomputers.
 
 Setting up the environment and FabSim3
-~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To make life easier, we provide a Docker image which contains an installation of FabSim3, as
 well as the Earthquake simulation code ``fdfault`` and the ``mogp_emulator`` toolkit. Our tutorial
@@ -48,7 +48,7 @@ run the following commands. Alternatively we describe how to automate the entire
 from the shell using FabSim.
 
 Setting up the model
-~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 
 In Uncertainty Quantification (UQ) workflows, we would like to learn about a complex simulator that
 describes the real world (imperfectly). These simulations are usually computationally
@@ -408,7 +408,7 @@ installation. You should be able to view these if you correctly mounted a shared
 your local machine and this directory in the container.
 
 Running the whole thing automated from the command line:
-~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 You can run the full simulation workflow by using:
