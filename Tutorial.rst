@@ -384,10 +384,10 @@ simulation for each one, we can draw many more samples (say, 10,000 in this case
 
    # mogp_emulator code
 
-   analysis_points = 10000
+   analysis_samples = 10000
 
-   query_points = ed.sample(analysis_points)
-   predictions = gp.predict(query_points)
+   analysis_points = ed.sample(analysis_samples)
+   predictions = gp.predict(analysis_points)
 
 The ``predictions`` holds the mean and variance of all 10,000 prediction points. We will need these
 momentarily to analyse the input space.
