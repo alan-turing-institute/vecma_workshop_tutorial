@@ -22,6 +22,10 @@ Although we focus mainly on the Mogp emulator to do sampling in this tutorial, w
 same workflow could be established using an alternative tool, namely the
 `EasyVVUQ component <http://easyvvuq.readthedocs.io>`_ in the VECMA toolkit.
 
+    **Sidebar: About FabSim3**
+    
+    FabSim3 is an toolkit for user-developers to help automate computational workflows involving many simulations and remote resources. It has been used in a variety of disciplines, for instance to facilitate coupled atomistic / coarse-grained materials simulations and to perform large-scale sensitivity analysis of agent-based migration models. The tool is open-source (BSD 3-clause license) and one of the main components of the `VECMA toolkit <http://www.vecma-toolkit.eu>`_.
+
 In addition, we will perform tasks on only on your local host due to time constraints of this session, but we will provide clear instructions on how you can scale up various aspects of this approach, and use FabSim3 to run the same ensembles on remote machines such as supercomputers.
 
 Setting up the environment and FabSim3
@@ -161,6 +165,10 @@ the design.
 have 20 design points, each containing 3 parameters. We can iterate over this to get each successive
 point where we need to run the simulation.
 
+    **Sidebar: EasyVVUQ, an alternative tool for scalable sampling**
+    
+    In this tutorial we use Mogp for sampling, primarily because we train a surrogate model that relies on its Gaussian process emulation functionalities. For other applications, it's also possible to use EasyVVUQ for sampling and uncertainty quantification. Both tools complement each other, in that Mogp provides Gaussian process emulators, whereas EasyVVUQ has a stronger emphasis on providing sophisticated and scalable sampling and results collation (for instance for use with thousands or millions of jobs on a remote supercomputer). EasyVVUQ is part of the `VECMA toolkit <http://www.vecma-toolkit.eu>`_ and has a documentation site `here <https://easyvvuq.readthedocs.io>`_.
+
 Executing the simulations locally
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -223,6 +231,14 @@ Essentially, you need to do three steps:
 2. Adding your user_specific information (such as account name and home directory) to `machines_user.yml`.
 3. Replace the 'localhost' part of your FabSim ensemble command with the name of your machine. For example, if your machine is "archer", then you could change `fabsim localhost mogp_ensemble:demo,sample_points=20` into `fabsim archer mogp_ensemble:demo,sample_points=20`.
 
+    **Sidebar: where do I find a suitable larger resource?**
+    
+    Unfortunately the national `ARCHER supercomputer <http://www.archer.ac.uk/>`_ is about to be decommissioned, but there are a few alternatives available. Several UK universities have so-called *Tier-2* resources available, which can support runs using thousands of cores, and one can also choose to buy time on the Cloud. For larger needs, one will need to look abroad, for instance by writing a proposal for `PRACE (preparatory) access <http://www.prace-ri.eu/>`_ or contacting other foreign supercomputer centres. Of course this is not an ideal situation, so we as authors of this tutorial happily endorse any effort to try and establish more suitable large-scale resources here in the UK.
+    
+    **Sidebar: running large ensembles on large machines**
+    
+    Most clusters and supercomputers have queuing systems that enable users to run a small ensemble of 5-20 jobs. However, larger ensembles can be rejected by queuing systems due to policy constraints meant to prevent scheduler overload. To circumvent this issue, one can choose to use a Pilot Job framework. Within the VECMA toolkit we provide `QCG-PilotJob <https://github.com/vecma-project/QCG-PilotJob>`_, a component which supports all major machines using the SLURM scheduler.
+    
 Analysing the Results
 ~~~~~~~~~~~~~~~~~~~~~
 
