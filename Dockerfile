@@ -87,6 +87,5 @@ RUN echo 'export PS1="\[\033[01;34m\][VECMA tutorial]\[\033[01;31m\] \w\[\033[00
 RUN echo 'export PATH='${Tutorial_dir}'/'${FabSim3_dir}'/bin:$PATH' >> /root/.bashrc
 RUN echo 'export PYTHONPATH='${Tutorial_dir}'/'${FabSim3_dir}':$PYTHONPATH' >> /root/.bashrc
 RUN echo 'export PYTHONPATH='${Tutorial_dir}'/'${FabSim3_dir}'/plugins/fabmogp:$PYTHONPATH' >> /root/.bashrc
-RUN echo 'alias clear_fabsim_results="rm -rf /home/root/FabSim3/*;rm -rf '${Tutorial_dir}'/'${FabSim3_dir}'/results/*"' >> /root/.bashrc
 
 ENTRYPOINT  service ssh restart > /dev/null 2>&1 && /bin/bash
