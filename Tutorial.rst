@@ -22,9 +22,22 @@ Although we focus mainly on the Mogp emulator to do sampling in this tutorial, w
 same workflow could be established using an alternative tool, namely the
 `EasyVVUQ component <http://easyvvuq.readthedocs.io>`_ in the VECMA toolkit.
 
-    **Sidebar: About FabSim3**
+   **Sidebar: About FabSim3**
     
-    FabSim3 is an toolkit for user-developers to help automate computational workflows involving many simulations and remote resources. It has been used in a variety of disciplines, for instance to facilitate coupled atomistic / coarse-grained materials simulations and to perform large-scale sensitivity analysis of agent-based migration models. The tool is open-source (BSD 3-clause license) and one of the main components of the `VECMA toolkit <http://www.vecma-toolkit.eu>`_.
+   FabSim3 is an toolkit for user-developers to help automate computational workflows involving many simulations
+   and remote resources. It has been used in a variety of disciplines, for instance to facilitate coupled atomistic /
+   coarse-grained materials simulations and to perform large-scale sensitivity analysis of agent-based migration models. The 
+   tool is open-source (BSD 3-clause license) and one of the main components of the
+   `VECMA toolkit <http://www.vecma-toolkit.eu>`_.
+
+   **Sidebar: About mogp_emulator**
+   
+   mogp_emulator is a python package for performing uncertainty quantitification (UQ) workflows for complex computer
+   simulations. The core component of the package is an efficient Gaussian Process emulator for fitting
+   surrogate models, which will also include GPU and FPGA support for situations where high performance is required.
+   It also contains tools for generating experimental designs and performing model calibration
+   which are highlighted in the tutorial. The package is open source (MIT license) and under current
+   development by the Turing Research Engineering Group as part of two projects on UQ.
 
 In addition, we will perform tasks on only on your local host due to time constraints of this session, but we will provide clear instructions on how you can scale up various aspects of this approach, and use FabSim3 to run the same ensembles on remote machines such as supercomputers.
 
@@ -36,6 +49,15 @@ well as the Earthquake simulation code ``fdfault`` and the ``mogp_emulator`` too
 relies on a specific FabSim3 plugin that provides customisations for this application. The plugin
 is called FabMogp, and you can find it at: https://github.com/edaub/fabmogp
 To set up Docker, please refer to the documentation provided `here <https://www.docker.com/get-started>`_
+
+   **Sidebar: code blocks in this tutorial**
+   Throughout the tutorial, we will highlight how to run the computational
+   workflow from the bash shell. These commands will be highlighted in code boxes with no preamble code comments.
+   Additionally, we will illustrate the underlying mogp_emulator Python code in code blocks. These will include a
+   comment preamble ``# mogp_emulator code`` to emphasize that this is python code that can be run in the Python 
+   interpreter. However, note that some of the code blocks will depend on previously defined variables or running some
+   of the FabSim commands first, so you may get errors if you are not careful. If you have a question about
+   running any of the code in the tutorial, please ask one of the facilitators.
 
 To download the Docker image, you can use:
 
@@ -50,7 +72,7 @@ then, create an empty folder on your PC, and login to the image by typing:
    docker run --rm -v <PATH_to_your_folder>:/home/root/turing_workshop/FabSim3/results -ti ha3546/vecma_turing_workshop
 
 Within the container, you can start a Python interpreter using ``python3`` to
-run the following commands. Alternatively we describe how to automate the entire workflow
+run some of the mogp_emulator routines. Alternatively we describe how to automate the entire workflow
 from the shell using FabSim.
 
 Setting up the model
@@ -68,6 +90,13 @@ displacement across the two sides of the fault (known as the slip) multiplied by
 fault plane that experienced this slip. Larger earthquakes occur when either more slip occurs or
 the area that slipped increases (in nature, these two quantities are correlated so earthquakes
 get bigger by both increasing the slip and the area simulataneously).
+
+   **Sidebar: fdfault**
+   To run the earthquake simulations, we are using the fdfault application. fdfault is a high
+   performance, parallelized finite difference code for simulation of frictional failure and
+   wave propagation in elastic-plastic media. It features high order finite difference methods
+   and is able to handle complex geometries through coordinate transformations and implements
+   a provably stable method.
 
 Physically, this slip occurs when the stress (or force) on the fault exceeds the fault strength.
 Fault strength is determined by a friction law that compares the shear force on a patch of the
@@ -91,7 +120,7 @@ the fault.
 
 Complicating matters is the fact that earthquake faults are not smooth planes, but instead rough
 bumpy surfaces with a fractal geometry. An important consequence of this is that the *smallest*
-waavelength bumps have the largest effect on the resulting forces. This is what makes earthquake
+wavelength bumps have the largest effect on the resulting forces. This is what makes earthquake
 problems challenging to model: at a given model resolution, you are omitting details that play an
 important role. This small scale roughness that is left out of the model must instead be accounted
 for when setting the strength of the fault. However, for this demonstration we will assume that
@@ -144,6 +173,8 @@ samples are drawn from each quantile of the distribution of each parameter that 
 
 .. code:: python
 
+   # mogp_emulator code
+
    import numpy as np
    import mogp_emulator
 
@@ -161,13 +192,26 @@ where each tuple gives the min/max value that each parameter should take. To cre
 we simply use the ``sample`` method, which requires the number of points that should be included in
 the design.
 
+   **Sidebar: other sampling methods in mogp_emulator**
+   mogp_emulator also implements Monte Carlo sampling and MICE (Mutual Information for Computer Experiments).
+   MICE is a sequential design algorithm that chooses simulation points one at a time (or in batches) based
+   on fitting a Gaussian Process to the intermediate results at each step. Usually, this additional overhead
+   is small compared to the simulation time required for a complex computer model, so this gives an improvement
+   in performance.
+
 ``input_points`` is a numpy array with shape ``(20, 3)`` as we
 have 20 design points, each containing 3 parameters. We can iterate over this to get each successive
 point where we need to run the simulation.
 
-    **Sidebar: EasyVVUQ, an alternative tool for scalable sampling**
+   **Sidebar: EasyVVUQ, an alternative tool for scalable sampling**
     
-    In this tutorial we use Mogp for sampling, primarily because we train a surrogate model that relies on its Gaussian process emulation functionalities. For other applications, it's also possible to use EasyVVUQ for sampling and uncertainty quantification. Both tools complement each other, in that Mogp provides Gaussian process emulators, whereas EasyVVUQ has a stronger emphasis on providing sophisticated and scalable sampling and results collation (for instance for use with thousands or millions of jobs on a remote supercomputer). EasyVVUQ is part of the `VECMA toolkit <http://www.vecma-toolkit.eu>`_, has a documentation site `here <https://easyvvuq.readthedocs.io>`_, and a simple separate tutorial `here <https://colab.research.google.com/drive/1qD07_Ry2lOB9-Is6Z2mQG0vVWskNBHjr>`_.
+   In this tutorial we use Mogp for sampling, primarily because we train a surrogate model that relies on its Gaussian
+   process emulation functionalities. For other applications, it's also possible to use EasyVVUQ for sampling and 
+   uncertainty quantification. Both tools complement each other, in that Mogp provides Gaussian process emulators, whereas 
+   EasyVVUQ has a stronger emphasis on providing sophisticated and scalable sampling and results collation (for instance for 
+   use with thousands or millions of jobs on a remote supercomputer). EasyVVUQ is part of the 
+   `VECMA toolkit <http://www.vecma-toolkit.eu>`_, has a documentation site `here <https://easyvvuq.readthedocs.io>`_, and a 
+   simple separate tutorial `here <https://colab.research.google.com/drive/1qD07_Ry2lOB9-Is6Z2mQG0vVWskNBHjr>`_.
 
 Executing the simulations locally
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -181,6 +225,8 @@ simulation. Each simulation takes about 20 seconds on 4 processors on my
 MacBook Pro, so the entire design will take several minutes to run.
 
 .. code:: python
+
+   # mogp_emulator code
 
    from earthquake import create_problem, run_simulation
 
@@ -260,6 +306,8 @@ Once the results have been collected, to re-load the input points, results, and 
 
 .. code:: python
 
+   # mogp_emulator code
+
    from mogp_functions import load_results
 
    results_dir = <path_to_results>/demo_localhost_16
@@ -276,6 +324,8 @@ the parameter space. We can fit a Gaussian Process to the results using the ``Ga
 
 .. code:: python
 
+   # mogp_emulator code
+
    gp = mogp_emulator.GaussianProcess(input_points, results)
 
 This just creates the GP class. Gaussian Processes are a non-parametric model for regression that approximates
@@ -288,12 +338,25 @@ but the simplest is to use the maximum marginal likelihood, which is easy to com
 
 .. code:: python
 
+   # mogp_emulator code
+
    gp.learn_hyperparameters()
 
 This finds a set of correlations lengths, the hyperparameters of the GP, that maximises the marginal
 log-likelihood and determines how the GP interpolates between unknown points. Once these parameters are
 estimated, we can make predictions efficiently for unknown parameter values and have estimates of
 the uncertainty.
+
+   **Sidebar: other options in the Gaussian Process surrogate model**
+   A Gaussian Process requires specification of a mean function and a covariance kernel in order to
+   perform the necessary calculations. We have several built-in kernels (the popular squared exponential and
+   Matern 5/2 kernels), though the user can easily define additional stationary kernels. The current tutorial
+   uses a zero mean function, but an upcoming update to mogp_emulator will allow for flexible specification
+   of mean functions.
+   
+   This tutorial fits the GP hyperparameters through maximum likelihood. We also have implemented weak prior
+   MCMC sampling if a Bayesian specification of the emulator is desired. Future improvements will also allow for 
+   priors to be specified to enable MAP or full MCMC estimation of the hyperparameters.
 
 Making Predictions
 ------------------
@@ -304,6 +367,8 @@ out across the full parameter space), but since we do not need to run the comput
 simulation for each one, we can draw many more samples (say, 10,000 in this case):
 
 .. code:: python
+
+   # mogp_emulator code
 
    analysis_points = 10000
 
@@ -348,6 +413,8 @@ the ``HistoryMatching`` class when creating it (or prior to computing the implau
 
 .. code:: python
 
+   # mogp_emulator code
+
    threshold = 3.
    known_value = 58.
 
@@ -365,6 +432,8 @@ numpy to get the NROY points. The NROY points provide us with one simple way to 
 the results:
 
 .. code:: python
+
+   # mogp_emulator code
 
    import matplotlib.pyplot as plt
 
@@ -392,6 +461,8 @@ stress component). We can also make a pseudocolor plot showing the implausibilit
 into this plane:
 
 .. code:: python
+
+   # mogp_emulator code
 
    import matplotlib.tri
 
