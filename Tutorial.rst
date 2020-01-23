@@ -22,24 +22,14 @@ Although we focus mainly on the Mogp emulator to do sampling in this tutorial, w
 same workflow could be established using an alternative tool, namely the
 `EasyVVUQ component <http://easyvvuq.readthedocs.io>`_ in the VECMA toolkit.
 
+    About FabSim3
+    """""""""""""
+    FabSim3 is an automation toolkit.
+
 In addition, we will perform tasks on only on your local host due to time constraints of this session, but we will provide clear instructions on how you can scale up various aspects of this approach, and use FabSim3 to run the same ensembles on remote machines such as supercomputers.
 
 Setting up the environment and FabSim3
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-==================  ==================
-Sidebar: about FabSim3
---------------------------------------
-FabSim3 is a Python-based automation toolkit for scientific simulation and data processing workflows, licensed under the BSD 3-clause license. It is developed as part of VECMA (http://www.vecma.eu), and is part of the VECMA Toolkit (http://www.vecma-toolkit.eu).
-
-Among other things, FabSim3 supports the use of simple one-liner commands to:
-
-- Enable execution of simulation and analysis tasks on supercomputers.
-- Establish and run coupled models using the workflow automation functionalities.
-- Organize input, output and environment information, creating a consistent log and making it possible by default to repeat/reproduce runs.
-- Perform large ensemble simulations (or replicated ones) using a one-liner command.
---------------------------------------
-==================  ==================
 
 To make life easier, we provide a Docker image which contains an installation of FabSim3, as
 well as the Earthquake simulation code ``fdfault`` and the ``mogp_emulator`` toolkit. Our tutorial
