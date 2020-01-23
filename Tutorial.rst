@@ -386,8 +386,8 @@ simulation for each one, we can draw many more samples (say, 10,000 in this case
 
    analysis_samples = 10000
 
-   analysis_points = ed.sample(analysis_samples)
-   predictions = gp.predict(analysis_points)
+   query_points = ed.sample(analysis_points)
+   predictions = gp.predict(query_points)
 
 The ``predictions`` holds the mean and variance of all 10,000 prediction points. We will need these
 momentarily to analyse the input space.
@@ -463,7 +463,7 @@ the results:
    import matplotlib.pyplot as plt
 
    plt.figure()
-   plt.plot(analysis_points[NROY, 0], analysis_points[NROY, 1], 'o')
+   plt.plot(query_points[NROY, 0], query_points[NROY, 1], 'o')
    plt.xlabel('Normal Stress (MPa)')
    plt.ylabel('Shear to Normal Stress Ratio')
    plt.xlim((-120., -80.))
@@ -492,8 +492,8 @@ into this plane:
    import matplotlib.tri
 
    plt.figure()
-   tri = matplotlib.tri.Triangulation(-(analysis_points[:,0]-80.)/40., (analysis_points[:,1]-0.1)/0.3)
-   plt.tripcolor(analysis_points[:,0], analysis_points[:,1], tri.triangles, implaus,
+   tri = matplotlib.tri.Triangulation(-(query_points[:,0]-80.)/40., (query_points[:,1]-0.1)/0.3)
+   plt.tripcolor(query_points[:,0], query_points[:,1], tri.triangles, implaus,
                  vmin = 0., vmax = 6., cmap="viridis_r")
    cb = plt.colorbar()
    cb.set_label("Implausibility")
