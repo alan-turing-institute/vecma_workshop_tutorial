@@ -312,6 +312,7 @@ the results; however if simulations were run using FabSim, then we need to fetch
 load them into the python interpreter. From the shell, to fetch the results we simply need to enter:
 
 .. code:: bash
+
    fab localhost fetch_results
 
 This will collate all of the results into a subdirectory of the ``results`` directory within the
