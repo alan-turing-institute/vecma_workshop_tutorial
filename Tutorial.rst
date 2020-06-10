@@ -231,7 +231,7 @@ MacBook Pro, so the entire design will take several minutes to run.
 
    # mogp_emulator code
 
-   from earthquake import create_problem, run_simulation
+   from plugins.fabmogp.earthquake import create_problem, run_simulation
 
    results = []
    counter = 1
@@ -245,6 +245,9 @@ MacBook Pro, so the entire design will take several minutes to run.
        counter += 1
 
    results = np.array(results)
+
+(Note that the earthquake functions are located in the plugin repository, so you would need to
+use the full import path to access these functions directly.)
 
 While this procedure might be okay for this demo, in real situations these runs would be much more
 expensive and need to be run on a supercomputer. Runs on a supercomputer will be much harder to
@@ -309,19 +312,20 @@ the results; however if simulations were run using FabSim, then we need to fetch
 load them into the python interpreter. From the shell, to fetch the results we simply need to enter:
 
 .. code:: bash
+
    fab localhost fetch_results
 
 This will collate all of the results into a subdirectory of the ``results`` directory within the
 FabSim installation (within the Docker container, this is likely to be ``demo_localhost_16``).
 Once the results have been collected, to re-load the input points, results, and the
 ``LatinHypercubeDesign`` class that created them we have provided a convenience function
-``load_results`` in the ``mogp_functions`` module:
+``load_results`` in the ``mogp_functions`` file in the fabmogp plugin:
 
 .. code:: python
 
    # mogp_emulator code
 
-   from mogp_functions import load_results
+   from plugins.fabmogp.mogp_functions import load_results
 
    results_dir = <path_to_results>/demo_localhost_16
    input_points, results, ed = load_results(results_dir)
