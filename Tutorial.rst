@@ -8,7 +8,7 @@ To generate and draw the samples we use the
 `Latin Hypercube technique <https://en.wikipedia.org/wiki/Latin_hypercube_sampling>`_ [Tang1993]_,
 while we rely on the `FabSim3 <https://fabsim3.readthedocs.io>`_ tool in the VECMA toolkit to
 automatically run ensembles and curate both the simulation inputs and outputs. In the final stages
-of the tutorial we use the `mogp_emulator <https://mogp_emulator.readthedocs.io`_ package to build a
+of the tutorial we use the `mogp_emulator <https://mogp_emulator.readthedocs.io>`_ package to build a
 Gaussian Process surrogate model, and use the surrogate model to examine the parameter space and determine
 plausible inputs to the computational earthquake model.
 
@@ -23,15 +23,15 @@ same workflow could be established using an alternative tool, namely the
 `EasyVVUQ component <http://easyvvuq.readthedocs.io>`_ in the VECMA toolkit.
 
    **Sidebar: About FabSim3**
-    
+
    FabSim3 is an toolkit for user-developers to help automate computational workflows involving many simulations
    and remote resources. It has been used in a variety of disciplines, for instance to facilitate coupled atomistic /
-   coarse-grained materials simulations and to perform large-scale sensitivity analysis of agent-based migration models. The 
+   coarse-grained materials simulations and to perform large-scale sensitivity analysis of agent-based migration models. The
    tool is open-source (BSD 3-clause license) and one of the main components of the
    `VECMA toolkit <http://www.vecma-toolkit.eu>`_.
 
    **Sidebar: About mogp_emulator**
-   
+
    mogp_emulator is a python package for performing uncertainty quantitification (UQ) workflows for complex computer
    simulations. The core component of the package is an efficient Gaussian Process emulator for fitting
    surrogate models, which will also include GPU and FPGA support for situations where high performance is required.
@@ -51,11 +51,11 @@ is called FabMogp, and you can find it at: https://github.com/edaub/fabmogp
 To set up Docker, please refer to the documentation provided `here <https://www.docker.com/get-started>`_
 
    **Sidebar: code blocks in this tutorial**
-   
+
    Throughout the tutorial, we will highlight how to run the computational
    workflow from the bash shell. These commands will be highlighted in code boxes with no preamble code comments.
    Additionally, we will illustrate the underlying mogp_emulator Python code in code blocks. These will include a
-   comment preamble ``# mogp_emulator code`` to emphasize that this is python code that can be run in the Python 
+   comment preamble ``# mogp_emulator code`` to emphasize that this is python code that can be run in the Python
    interpreter. However, note that some of the code blocks will depend on previously defined variables or running some
    of the FabSim commands first, so you may get errors if you are not careful. If you have a question about
    running any of the code in the tutorial, please ask one of the facilitators.
@@ -63,7 +63,7 @@ To set up Docker, please refer to the documentation provided `here <https://www.
 To download the Docker image, you can use:
 
 .. code:: bash
-   
+
    docker pull ha3546/vecma_turing_workshop
 
 then, create an empty folder on your PC, and login to the image by typing:
@@ -93,7 +93,7 @@ the area that slipped increases (in nature, these two quantities are correlated 
 get bigger by both increasing the slip and the area simulataneously).
 
    **Sidebar: fdfault**
-   
+
    To run the earthquake simulations, we are using the fdfault application. fdfault is a high
    performance, parallelized finite difference code for simulation of frictional failure and
    wave propagation in elastic-plastic media. It features high order finite difference methods
@@ -195,7 +195,7 @@ we simply use the ``sample`` method, which requires the number of points that sh
 the design.
 
    **Sidebar: other sampling methods in mogp_emulator**
-   
+
    mogp_emulator also implements Monte Carlo sampling and MICE (Mutual Information for Computer Experiments).
    MICE is a sequential design algorithm that chooses simulation points one at a time (or in batches) based
    on fitting a Gaussian Process to the intermediate results at each step. Usually, this additional overhead
@@ -207,13 +207,13 @@ have 20 design points, each containing 3 parameters. We can iterate over this to
 point where we need to run the simulation.
 
    **Sidebar: EasyVVUQ, an alternative tool for scalable sampling**
-    
+
    In this tutorial we use Mogp for sampling, primarily because we train a surrogate model that relies on its Gaussian
-   process emulation functionalities. For other applications, it's also possible to use EasyVVUQ for sampling and 
-   uncertainty quantification. Both tools complement each other, in that Mogp provides Gaussian process emulators, whereas 
-   EasyVVUQ has a stronger emphasis on providing sophisticated and scalable sampling and results collation (for instance for 
-   use with thousands or millions of jobs on a remote supercomputer). EasyVVUQ is part of the 
-   `VECMA toolkit <http://www.vecma-toolkit.eu>`_, has a documentation site `here <https://easyvvuq.readthedocs.io>`_, and a 
+   process emulation functionalities. For other applications, it's also possible to use EasyVVUQ for sampling and
+   uncertainty quantification. Both tools complement each other, in that Mogp provides Gaussian process emulators, whereas
+   EasyVVUQ has a stronger emphasis on providing sophisticated and scalable sampling and results collation (for instance for
+   use with thousands or millions of jobs on a remote supercomputer). EasyVVUQ is part of the
+   `VECMA toolkit <http://www.vecma-toolkit.eu>`_, has a documentation site `here <https://easyvvuq.readthedocs.io>`_, and a
    simple separate tutorial `here <https://colab.research.google.com/drive/1qD07_Ry2lOB9-Is6Z2mQG0vVWskNBHjr>`_.
 
 Executing the simulations locally
@@ -281,23 +281,23 @@ Essentially, you need to do three steps:
 3. Replace the 'localhost' part of your FabSim ensemble command with the name of your machine. For example, if your machine is "archer", then you could change `fabsim localhost mogp_ensemble:demo,sample_points=20` into `fabsim archer mogp_ensemble:demo,sample_points=20`.
 
     **Sidebar: where do I find a suitable larger resource?**
-    
-    Unfortunately the national `ARCHER supercomputer <http://www.archer.ac.uk/>`_ is about to be decommissioned, but 
-    there are a few alternatives available. Several UK universities have so-called *Tier-2* resources available, which 
-    can support runs using thousands of cores, and one can also choose to buy time on the Cloud. For larger needs, one 
-    will need to look abroad, for instance by writing a proposal for `PRACE (preparatory) access 
-    <http://www.prace-ri.eu/>`_ or contacting other foreign supercomputer centres. Of course this is not an ideal 
-    situation, so we as authors of this tutorial happily endorse any effort to try and establish more suitable 
+
+    Unfortunately the national `ARCHER supercomputer <http://www.archer.ac.uk/>`_ is about to be decommissioned, but
+    there are a few alternatives available. Several UK universities have so-called *Tier-2* resources available, which
+    can support runs using thousands of cores, and one can also choose to buy time on the Cloud. For larger needs, one
+    will need to look abroad, for instance by writing a proposal for `PRACE (preparatory) access
+    <http://www.prace-ri.eu/>`_ or contacting other foreign supercomputer centres. Of course this is not an ideal
+    situation, so we as authors of this tutorial happily endorse any effort to try and establish more suitable
     large-scale resources here in the UK.
-    
+
     **Sidebar: running large ensembles on large machines**
-    
-    Most clusters and supercomputers have queuing systems that enable users to run a small ensemble of 5-20 jobs. 
-    However, larger ensembles can be rejected by queuing systems due to policy constraints meant to prevent scheduler 
-    overload. To circumvent this issue, one can choose to use a Pilot Job framework. Within the VECMA toolkit we provide 
-    `QCG-PilotJob <https://github.com/vecma-project/QCG-PilotJob>`_, a component which supports all major machines using the 
+
+    Most clusters and supercomputers have queuing systems that enable users to run a small ensemble of 5-20 jobs.
+    However, larger ensembles can be rejected by queuing systems due to policy constraints meant to prevent scheduler
+    overload. To circumvent this issue, one can choose to use a Pilot Job framework. Within the VECMA toolkit we provide
+    `QCG-PilotJob <https://github.com/vecma-project/QCG-PilotJob>`_, a component which supports all major machines using the
     SLURM scheduler.
-    
+
 Analysing the Results
 ~~~~~~~~~~~~~~~~~~~~~
 
@@ -361,15 +361,15 @@ estimated, we can make predictions efficiently for unknown parameter values and 
 the uncertainty.
 
    **Sidebar: other options in the Gaussian Process surrogate model**
-   
+
    A Gaussian Process requires specification of a mean function and a covariance kernel in order to
    perform the necessary calculations. We have several built-in kernels (the popular squared exponential and
    Matern 5/2 kernels), though the user can easily define additional stationary kernels. The current tutorial
    uses a zero mean function, but an upcoming update to mogp_emulator will allow for flexible specification
    of mean functions.
-   
+
    This tutorial fits the GP hyperparameters through maximum likelihood. We also have implemented weak prior
-   MCMC sampling if a Bayesian specification of the emulator is desired. Future improvements will also allow for 
+   MCMC sampling if a Bayesian specification of the emulator is desired. Future improvements will also allow for
    priors to be specified to enable MAP or full MCMC estimation of the hyperparameters.
 
 Making Predictions
@@ -417,11 +417,11 @@ studies have shown that not accounting for model discrepancy leads to `overconfi
 UQ treatment to a computational model. However, estimating model uncertainty is in itself a difficult
 (and often subjective) task, and is beyond the scope of this tutorial, as it requires knowledge about
 the approximations made in the simulation. Thus, we will restrict ourselves to only accounting for
-uncertainty in the approximate model in this tutorial, but note that realistic UQ assessments 
+uncertainty in the approximate model in this tutorial, but note that realistic UQ assessments
 require careful scrutiny and awareness of the limitations of computational models.
 
    **Sidebar: other calibration techniques**
-   
+
    An advantage of history matching is that it is conceptually simple and can still provide useful
    information even if the surrogate model is uncertain about parts of the parameter space. However,
    it has the disadvantage that it only tells you about what parts of the space can be ruled out,
