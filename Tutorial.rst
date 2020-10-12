@@ -350,14 +350,14 @@ the complex simulator function as a multivariate normal distribution. In simple 
 between the known simulation points in a robust way and provides uncertainty estimates for any predictions
 that it makes. Because it has an uncertainty estimate, it is commonly used in UQ workflows.
 
-In order to make predictions, we need to fit the model to the data. The class has several methods of doing this,
+In order to make predictions, we need to fit the model to the data. The library supports several methods of doing this,
 but the simplest is to use the maximum marginal likelihood, which is easy to compute for a GP:
 
 .. code:: python
 
    # mogp_emulator code
 
-   gp.learn_hyperparameters()
+   gp = mogp_emulator.fit_GP_MAP(gp)
 
 This finds a set of correlations lengths, the hyperparameters of the GP, that maximises the marginal
 log-likelihood and determines how the GP interpolates between unknown points. Once these parameters are
@@ -372,9 +372,11 @@ the uncertainty.
    uses a zero mean function, but an upcoming update to mogp_emulator will allow for flexible specification
    of mean functions.
 
-   This tutorial fits the GP hyperparameters through maximum likelihood. We also have implemented weak prior
-   MCMC sampling if a Bayesian specification of the emulator is desired. Future improvements will also allow for
-   priors to be specified to enable MAP or full MCMC estimation of the hyperparameters.
+   This tutorial fits the GP hyperparameters through maximum likelihood. The
+   library also supports providing prior distributions on the hyperparameters
+   and fitting more complex mean functions, both of which tend to build
+   emulators that are more robust in regions where few input samples have
+   been drawn.
 
 Making Predictions
 ------------------
