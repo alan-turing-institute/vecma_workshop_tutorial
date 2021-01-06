@@ -8,9 +8,9 @@ ARG Tutorial_dir=/home/root/turing_workshop
 ARG FabSim3_dir=FabSim3
 ARG FabSim3_repo=https://github.com/djgroen/FabSim3.git
 ARG fdfault_dir=fdfault
-ARG fdfault_repo=https://github.com/egdaub/fdfault.git
+ARG fdfault_repo=https://github.com/edaub/fdfault.git
 ARG mogp_emulator_dir=mogp_emulator
-ARG mogp_emulator_repo=https://github.com/alan-turing-institute/mogp_emulator.git
+ARG mogp_emulator_repo=https://github.com/alan-turing-institute/mogp-emulator.git
 
 
 # install dependencies needs to for FabSim3

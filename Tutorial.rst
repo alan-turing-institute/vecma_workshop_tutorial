@@ -8,7 +8,7 @@ To generate and draw the samples we use the
 `Latin Hypercube technique <https://en.wikipedia.org/wiki/Latin_hypercube_sampling>`_ [Tang1993]_,
 while we rely on the `FabSim3 <https://fabsim3.readthedocs.io>`_ tool in the VECMA toolkit to
 automatically run ensembles and curate both the simulation inputs and outputs. In the final stages
-of the tutorial we use the `mogp_emulator <https://mogp_emulator.readthedocs.io>`_ package to build a
+of the tutorial we use the `mogp_emulator <https://mogp-emulator.readthedocs.io>`_ package to build a
 Gaussian Process surrogate model, and use the surrogate model to examine the parameter space and determine
 plausible inputs to the computational earthquake model.
 
@@ -17,7 +17,7 @@ In terms of components used, our Tube Map looks as follows:
 .. figure:: FabMogpMap.png
 
 We will use both `FabSim3 <https://fabsim3.readthedocs.io>`_ from the VECMA toolkit and the
-`Mogp emulator <https://github.com/alan-turing-institute/mogp_emulator>`_ from the Turing institute.
+`Mogp emulator <https://github.com/alan-turing-institute/mogp-emulator>`_ from the Turing institute.
 Although we focus mainly on the Mogp emulator to do sampling in this tutorial, we will reflect on how the
 same workflow could be established using an alternative tool, namely the
 `EasyVVUQ component <http://easyvvuq.readthedocs.io>`_ in the VECMA toolkit.
@@ -47,7 +47,7 @@ Setting up the environment and FabSim3
 To make life easier, we provide a Docker image which contains an installation of FabSim3, as
 well as the Earthquake simulation code ``fdfault`` and the ``mogp_emulator`` toolkit. Our tutorial
 relies on a specific FabSim3 plugin that provides customisations for this application. The plugin
-is called FabMogp, and you can find it at: https://github.com/edaub/fabmogp
+is called FabMogp, and you can find it at: https://github.com/alan-turing-institute/fabmogp
 To set up Docker, please refer to the documentation provided `here <https://www.docker.com/get-started>`_
 
    **Sidebar: code blocks in this tutorial**

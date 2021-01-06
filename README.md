@@ -26,13 +26,13 @@ to access and run the docker image.
 
 ## Software Used in this Tutorial
 
-* [mogp_emulator](https://github.com/alan-turing-institute/mogp_emulator),
+* [mogp_emulator](https://github.com/alan-turing-institute/mogp-emulator),
   a software library for performing surrogate model based Uncertainty
   Quantification on complex computer simulations
 * [FabSim3](https://github.com/djgroen/FabSim3), a simulation management
   tool to support reproducible computational workflows
 * [fabmogp](https://github.com/alan-turing-institute/fabmogp), a FabSim3
   plugin to perform the simulations described in the tutorial
-* [fdfault](https://github.com/egdaub/fdfault), a high performance
+* [fdfault](https://github.com/edaub/fdfault), a high performance
   finite difference code for performing dynamic earthquake rupture simulations.
 

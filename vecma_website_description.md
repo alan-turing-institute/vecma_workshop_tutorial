@@ -45,7 +45,7 @@ the FabSim3 plugin to run the earthquake ensemble simulations.
 
 An in-depth tutorial describing this workflow, including links to a Docker image that installs all needed
 software and dependencies, is available
-[here](https://github.com/edaub/vecma_workshop_tutorial/blob/master/Tutorial.rst).
+[here](https://github.com/alan-turing-institute/vecma_workshop_tutorial/blob/master/Tutorial.rst).
 Additionally, a conference paper on this work is under way, and the article text, scripts, and the computational
 environment in which the simulations were run is available
 [here](https://github.com/alan-turing-institute/fabmogp_paper).
